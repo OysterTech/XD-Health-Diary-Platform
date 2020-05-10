@@ -1,0 +1,379 @@
+@charset "utf-8";
+
+/** 通用样式 */
+
+html,
+body,
+ul,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+dt,
+dd {
+	margin: 0;
+	padding: 0;
+}
+
+ul,
+li {
+	list-style: none;
+}
+
+a:link,
+a:visited,
+a:active {
+	text-decoration: none;
+}
+
+body {
+	background: #040f3c;
+}
+
+@font-face {
+	font-family: yjsz;
+	src: url('../font/yjsz.ttf');
+}
+
+@font-face {
+	font-family: tencent;
+	src: url('../font/tencent.ttf');
+}
+
+th,
+td {
+	text-align: center;
+}
+
+.btn-purple {
+	color: #fff;
+	background-color: #be7cf8;
+}
+
+.btn-purple:hover,
+.btn-purple:active,
+.btn-purple:focus {
+	color: #fff;
+	background-color: #B15BFF;
+}
+
+
+/* 通用样式 end */
+
+
+/* 日历组件 */
+
+.calendarTitle,
+.calendarMain {
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
+}
+
+#calendarApp {
+	width: 100%;
+	background: #1d2a42;
+	font-size: 18px;
+}
+
+.calendarItem {
+	width: 14%;
+	height: 60px;
+	line-height: 60px;
+	border: 1px solid #000;
+	color: #53bf18;
+	font-family: 'tencent';
+}
+
+.calendarDateTitle {
+	width: 42%;
+	height: 40px;
+	color: #12f0e9;
+	line-height: 40px;
+	border: 1px solid #000;
+}
+
+.calendarMovingItem {
+	width: 14%;
+	height: 40px;
+	line-height: 40px;
+	border: 1px solid #000;
+}
+
+.calendarMovingItem a {
+	color: #E2E509;
+}
+
+@media screen and (max-width: 568px) {
+	.calendarDateTitle {
+		width: 150px;
+		height: 40px;
+		line-height: 40px;
+	}
+	.calendarMovingItem {
+		width: 50px;
+		height: 40px;
+		line-height: 40px;
+	}
+	.calendarTitle,
+	.calendarMain,
+	#calendarApp {
+		width: 364px;
+		margin: 0;
+	}
+	.calendarItem {
+		width: 50px;
+		height: 40px;
+		line-height: 40px;
+	}
+}
+
+
+/* 日历组件 end */
+
+.header {
+	height: 80px;
+	position: relative;
+	padding-top: 13px;
+	font-size: 36px;
+	color: #00ffff;
+	text-align: center;
+	background: url(../image/bg.png) top center no-repeat;
+	font-family: 'tencent';
+}
+
+.header a {
+	font-family: 'Microsoft YaHei';
+}
+
+.main {
+	padding: 0 30px 30px;
+}
+
+.main-left,
+.main-right {
+	float: left;
+	width: 28%;
+	padding: 0 10px;
+}
+
+.main-middle {
+	float: left;
+	width: 44%;
+	padding: 0 10px;
+}
+
+
+/** 组件基础 */
+
+.name-title {
+	font-size: 20px;
+	color: #00ffff;
+}
+
+.border-container {
+	position: relative;
+	margin-top: 15px;
+	padding: 10px;
+	border: 1px solid #54dcf2;
+}
+
+.border-container span.border-span {
+	display: block;
+	position: absolute;
+	width: 35px;
+	height: 35px;
+}
+
+.border-container span.top-left {
+	top: -4px;
+	left: -4px;
+	border-top: 3px solid #54dcf2;
+	border-left: 3px solid #54dcf2;
+}
+
+.border-container span.top-right {
+	top: -4px;
+	right: -4px;
+	border-top: 3px solid #54dcf2;
+	border-right: 3px solid #54dcf2;
+}
+
+.border-container span.bottom-left {
+	bottom: -4px;
+	left: -4px;
+	border-bottom: 3px solid #54dcf2;
+	border-left: 3px solid #54dcf2;
+}
+
+.border-container span.bottom-right {
+	bottom: -4px;
+	right: -4px;
+	border-bottom: 3px solid #54dcf2;
+	border-right: 3px solid #54dcf2;
+}
+
+
+/** 组件基础 end */
+
+
+/** 右侧表格 */
+
+.latestXieTable {
+	margin: 7px 0;
+	text-align: center;
+}
+
+.latestXieTable>thead>tr>th {
+	border-bottom: 1px solid #0f4075;
+	padding: 2px 8px;
+	text-align: center;
+	color: #419aff;
+	font-size: 15px;
+	font-weight: normal;
+	border-top: 1px solid #0f4075!important;
+}
+
+.latestXieTable tbody tr td {
+	padding: 1px 8px;
+	font-size: 16px;
+	line-height: 30px;
+	border: none;
+	color: #fff;
+}
+
+.latestXieTable tbody tr:nth-child(2n) {
+	background: #1d2a42;
+}
+
+.latestXieTable tbody tr:hover {
+	background: #1d2a42;
+}
+
+.latestXieTable tbody tr td:nth-child(2) {
+	color: #12f0e9;
+}
+
+.latestXieTable tbody tr td:nth-child(3) {
+	color: #e9aa00;
+}
+
+
+/** 右侧表格 end */
+
+
+/** 自定义组件 */
+
+.countNumber {
+	height: 100px;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 15px 0 0 20%;
+}
+
+.countNumber span {
+	font-family: 'yjsz';
+	display: block;
+	float: left;
+	width: 50px;
+	border: 1px solid #05bdc9;
+	box-shadow: inset 0 0 3px 5px #00b3fe;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	height: 70px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	margin-right: 6px;
+	font-size: 35px;
+	color: #ffff01;
+	font-weight: bold;
+	text-align: center;
+	padding-top: 10px;
+	background-color: #001729;
+}
+
+#monthCountLineChart {
+	height: 260px;
+	width: 380px;
+	margin-top: -38px;
+	margin-left: 8px;
+	margin-bottom: -25px;
+}
+
+
+/** 自定义组件 end */
+
+.copyright {
+	position: absolute;
+	bottom: 0;
+}
+
+.copyright a {
+	text-decoration: none;
+	color: #16a085;
+}
+
+.copyright a:hover {
+	text-decoration: underline;
+}
+
+.button {
+	position: relative;
+	padding: 0.5em 1.5em;
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
+	outline: none;
+	font-size: 18px;
+	margin: 1em 0.8em;
+}
+
+.button.type1 {
+	color: #00ffff;
+}
+
+.button.type1.type1::after,
+.button.type1.type1::before {
+	content: "";
+	display: block;
+	position: absolute;
+	width: 20%;
+	height: 20%;
+	border: 2px solid;
+	transition: all 0.6s ease;
+	border-radius: 2px;
+}
+
+.button.type1.type1::after {
+	bottom: 0;
+	right: 0;
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-bottom-color: #566473;
+	border-right-color: #566473;
+}
+
+.button.type1.type1::before {
+	top: 0;
+	left: 0;
+	border-bottom-color: transparent;
+	border-right-color: transparent;
+	border-top-color: #566473;
+	border-left-color: #566473;
+}
+
+.button.type1.type1:hover:after,
+.button.type1.type1:hover:before {
+	width: 100%;
+	height: 100%;
+}

@@ -1,0 +1,139 @@
+<div class="modal fade" id="actModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title">记录一下爽的过程吧<br>PS:<b>先收拾并检查好战场!!</b></h3>
+			</div>
+			<div class="modal-body">
+				<table id="addTable" class="table table-striped table-bordered table-hover"
+					   style="border-radius: 5px; border-collapse: separate;">
+					<tr>
+						<th style="vertical-align: middle;">时间<br><font color="red" style="font-size: 20px;">*</font></th>
+						<td>
+							<div id="addTime_picker" class="input-group date" data-date-format="yyyy-mm-dd hh:ii">
+								<input id="addTime" class="form-control" size="16" readonly>
+								<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+								<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th style="vertical-align: middle;">内容<br><font color="red" style="font-size: 20px;">*</font></th>
+						<td><textarea v-model="addContent" class="form-control" rows="3"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<th style="vertical-align: middle;">图片</th>
+						<td id="uploadImageForm">
+							<input type="hidden" id="imageUrl">
+							<div class="input-group">
+								<span class="input-group-addon">1</span>
+								<input type="file" id="uploadImage_1" multiple="multiple" class="form-control">
+								<span class="input-group-btn">
+									<button class="btn btn-primary" id="uploadImage_btn_1"
+											@click="toUpload(1)">上传</button>
+									<button class="btn btn-purple" id="manualUrl_btn_1"
+											@click="manualInputImageUrl(1)">手输</button>
+								</span>
+							</div>
+						</td>
+					</tr>
+					<tr v-for="(info, index) in enumTypeList" :key="index">
+						<th style="vertical-align: middle;">{{info.name}}</th>
+						<td>
+							<input @click="getEnum(info.type,info.name,info.multiple)" :value="checkedEnumName[info.type]" class="form-control" readonly>
+						</td>
+					</tr>
+
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-warning" data-dismiss="modal">&lt; 算了</button>
+				<button class="btn btn-success" @click="toAdd()"><i class="fa fa-rocket" aria-hidden="true"></i> 发射
+					&gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="listModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="listModalTitle">{{actDate}}共act了{{todayXieList.length}}次</h3>
+			</div>
+			<div class="modal-body">
+				<table id="listTable" class="table table-striped table-bordered table-hover"
+					   style="border-radius: 5px; border-collapse: separate;">
+					<tr>
+						<th>时间</th>
+						<th>内容</th>
+						<th>图片</th>
+						<th>操作</th>
+					</tr>
+					<tr v-for="actData in todayXieList">
+						<td>{{actData['time']}}</td>
+						<td>{{actData['content']}}</td>
+						<td>
+							<button v-if="actData['img']>0" class="btn btn-success"
+									@click="showImage(actDate,actData['id'])">精彩瞬间({{actData['img']}})</button>
+							<p v-else>/</p>
+						</td>
+						<td>
+							<button class="btn btn-info" id="showContentBtn_12" @click="alert(actData['content'])"
+									style="display: none;">内容</button>
+							<button class="btn btn-danger" @click="readyDelete(actData['id'])">不是我act的</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">了解了 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="imageListModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="imageModalTitle"></h3>
+			</div>
+			<div class="modal-body">
+				<table id="imageListTable" class="table table-striped table-bordered table-hover"
+					   style="border-radius: 5px; border-collapse: separate;line-height: 2.5;"></table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">看完啦 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="tipsModal" style="z-index:99999">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title" id="tipsTitle">温馨提示</h3>
+			</div>
+			<div class="modal-body">
+				<p id="tips" style="color:#fb7312;font-weight:bold;font-size:23px;text-align:center;"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">关闭 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>

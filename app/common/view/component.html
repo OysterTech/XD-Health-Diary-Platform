@@ -1,0 +1,236 @@
+<!-- 多选模态框 -->
+<!-- @Oyster Cheung(20200105-20200501) -->
+<style>
+	.select-picker {
+		padding: 10px;
+	}
+
+	.select-picker ul {
+		padding-left: 8px;
+	}
+
+	.select-picker li {
+		list-style: none;
+		padding-left: 40px;
+		line-height: 40px;
+		background: url("/image/icon-radio.png") left center no-repeat;
+		background-size: 24px;
+	}
+
+	.select-picker li.on {
+		background: url("/image/icon-radio-on.png") left center no-repeat;
+		background-size: 24px;
+	}
+
+	.select-picker .checkbox li {
+		background: url("/image/icon-checkbox.png") left center no-repeat;
+		background-size: 24px;
+	}
+
+	.select-picker .checkbox li.on {
+		background: url("/image/icon-checkbox-on.png") left center no-repeat;
+		background-size: 24px;
+	}
+
+	.select-picker .checkbox li.on-disable {
+		background: url("/image/icon-checkbox-on-disable.png") left center no-repeat;
+		background-size: 24px;
+	}
+
+	.select-picker .radio li {
+		background: url("/image/icon-radio.png") left center no-repeat;
+		background-size: 24px;
+	}
+
+	.select-picker .radio li.on {
+		background: url("/image/icon-radio-on.png") left center no-repeat;
+		background-size: 24px;
+	}
+</style>
+
+<template id="choose-item-template">
+	<div class="modal fade bs-example-modal-lg" id="chooseItemModalMain">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h3 class="modal-title">{{title}}</h3>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<input @input="filterData" v-model="filterText" class="form-control"
+										   placeholder="输入内容以筛选">
+								</div>
+								<div style="height: 300px; overflow: auto" class="select-picker">
+									<ul i="ul-body" :class="[(multiple===true)?'checkbox':'radio']">
+										<!-- 是否初次打开选择框 -->
+										<template v-if="filteredList===''">
+											<li v-for="(name,id) in itemList"
+												:class="[(checkedList.indexOf(id)>=0)?'on':'']"
+												@click="checked(id)">{{name}}</li>
+										</template>
+										<template v-else>
+											<li v-for="(name,id) in filteredList"
+												:class="[(checkedList.indexOf(id)>=0)?'on':'']"
+												@click="checked(id)">{{name}}</li>
+										</template>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button v-if="multiple===true" class="btn btn-warning" @click="clearAll">清空</button>
+					<button class="btn btn-primary" @click="close">关闭</button>
+					<button class="btn btn-success" @click="returnCheckedId">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	var chooseItemModalVue = {
+		template: '#choose-item-template',
+		props: [
+			'title',// 模态框标题
+			'itemList',// 节点列表（一维id:name）
+			'propCheckedList',// 默认选中的节点列表
+			'multiple',// 是否允许多选
+			'saveMethodName',// 父组件中，保存选中数据的方法名
+		],
+		data: function () {
+			return {
+				checkedList: this.propCheckedList,
+				filterText: "",
+				filteredList: ""
+			}
+		},
+		methods: {
+			returnCheckedId: function () {
+				this.$emit('update:checked-node', this.checkedList);
+				this.$parent[this.saveMethodName]();
+
+				$("#chooseItemModalMain").modal('hide');
+			},
+			filterData: function () {
+				if (this.filterText == "") {
+					this.filteredList = "";
+					return;
+				}
+
+				this.filteredList = [];
+
+				for (i in this.itemList) {
+					if (this.itemList[i].indexOf(this.filterText) > -1) {
+						this.filteredList[i] = this.itemList[i];
+					}
+				}
+			},
+			show: function () {
+				// 第二次调用时要更新节点列表
+				this.checkedList = this.propCheckedList;
+
+				$("#chooseItemModalMain").modal('show');
+				return true;
+			},
+			checked: function (id) {
+				if (this.multiple === true) {
+					let loc = this.checkedList.indexOf(id);
+
+					// 如果已选中，去除掉
+					if (loc >= 0) {
+						this.checkedList.splice(loc, 1);
+					} else {
+						this.checkedList.push(id);
+					}
+				} else {
+					// 单选直接赋值就好
+					this.checkedList = [id];
+				}
+			},
+			clearAll: function () {
+				this.checkedList = [];
+				this.filterText = "";
+				this.filteredList = "";
+			},
+			close: function () {
+				this.clearAll();
+				$("#chooseItemModalMain").modal('hide');
+			}
+		}
+	};
+</script>
+<!-- /.多选模态框 -->
+
+
+<!-- echarts饼图 -->
+<!-- @Oyster Cheung(20200404-20200406) -->
+<template id="pie-template">
+	<div :id="pieChartId" :style="{height:chartHeight}"></div>
+</template>
+
+<script>
+	var pieVue = {
+		template: '#pie-template',
+		props: ['id', 'name', 'height'],
+		data: function () {
+			var that = this;
+			return {
+				chartData: [],
+				chartHeight: this.height,
+				pieChartId: this.id,
+				chartOption: {
+					color: ["#64dcff", "#ccffbc", "#ffc85c", "#ff9f7f", "#fb7293", "#E690D1", "#e7bcf3", "#9d96f5", "#8378EA", "#37A2DA", "#32C5E9", "#67E0E3", "#BBFFBB"],
+					tooltip: {
+						trigger: 'item',
+						formatter: '{a} <br/>{b} : {c} ({d}%)'
+					},
+					legend: {
+						type: 'scroll',
+						orient: 'vertical',
+						right: 10,
+						top: 20,
+						bottom: 20,
+						textStyle: {
+							color: '#12f0e9'
+						},
+						data: that.field
+					},
+					series: [{
+						name: that.name,
+						type: 'pie',
+						radius: '65%',
+						center: ['45%', '50%'],
+						data: that.chartData
+					}]
+				}
+			}
+		},
+		methods: {
+			init: function () {
+				let field = [];
+
+				for (i in this.chartData) {
+					field.push(this.chartData[i]['name']);
+				}
+
+				this.chartOption.series[0].data = this.chartData;
+				this.chartOption.legend.data = field;
+
+				echarts.init(document.getElementById(this.pieChartId)).setOption(this.chartOption);
+			}
+		},
+		updated() {
+			console.log("com-updated");
+		},
+		beforeUpdate() {
+			console.log("com-beforeUpdate");
+		}
+	};
+</script>
+<!-- /.echarts饼图 -->

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<title>登录</title>
+	<link rel="stylesheet" href="{$staticPath}/css/login.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body style="background:url({$staticPath}/image/bg_1.jpg) no-repeat;background-position:5%;background-size:cover;">
+	<div id="app" class="container">
+		<div class="content">
+			<div class="login-wrap">
+				<div class="login-box-wrap">
+					<div class="login-notice">&copy; 2014-2020 生蚝科技&nbsp;&nbsp;All rights Reserved</div>
+					<!--div class="login-static-qrcode">
+						<div class="login-form-switch">
+							<img src="https://yach-static.zhiyinlou.com/xiaoneng/sso/online/assets/icon_pwd.svg" alt="密码">
+						</div>
+						<div class="logo">
+						</div>
+						<div class="qrcode-wrap">
+							<p class="login-box-title">知音楼扫码</p>
+							<div class="login-box-qrcode hide" id="scanCode">
+							</div>
+						</div>
+					</div-->
+					<div class="login-static-form">
+						<!--div class="login-qrcode-switch">
+							<img src="https://yach-static.zhiyinlou.com/xiaoneng/sso/online/assets/icon_qrcode.svg" alt="扫码">
+						</div-->
+						<div class="logo">
+							<img src="https://www.xshgzs.com/resource/index/images/logo_transparent.png"
+								 style="width: 170px;">
+						</div>
+						<div class="form-wrap">
+							<p class="login-box-title">账号登录</p>
+							<div class="login-box-form">
+								<div class="account_form">
+									<div class="inputWrap">
+										<div class="wrap_input">
+											<input v-model="userName" placeholder="请输入用户名" class="is-focus"
+												   autocomplete="off">
+										</div>
+										<div class="wrap_input">
+											<input v-model="userPin" type="password" placeholder="请输入PIN"
+												   class="is-success"
+												   autocomplete="off">
+										</div>
+									</div>
+									<!--div class="forget">
+										<span onclick="javascript: window.open('/portal/password_find')">
+											忘记密码?
+										</span>
+									</div-->
+									<button class="wrap_button" @click="toLogin" :disabled="loading">
+										<i v-if="loading==true" class="btn_loading"></i>
+										登 录
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="tokenModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+								  class="sr-only">Close</span></button>
+						<h3 class="modal-title">请输入二步验证码</h3>
+					</div>
+					<div class="modal-body">
+						<div class="input-group">
+							<span class="input-group-addon">TOKEN</span>
+							<input v-model="token" @input="checkTokenLength" type="number" class="form-control">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button @click="goback" class="btn btn-warning">&lt; 放弃</button>
+						<button @click="checkToken" class="btn btn-success" :disabled="disabledCheckToken">登录
+							&gt;</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="message-container" id="messageContainer" style="z-index:9999">
+	</div>
+</body>
+
+<script src="{$staticPath}/js/config.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script>
+	var vm = new Vue({
+		el: '#app',
+		data() {
+			return {
+				messageCount: 0,
+				userName: "",
+				userPin: "",
+				token: 0,
+				ticket: "",
+				loading: false,
+				disabledCheckToken: true,
+			}
+		},
+		methods: {
+			toLogin: function () {
+				let that = this;
+
+				if (that.userName == "" || that.userName.length < 3) {
+					that.showMessage("info", "请正确输入用户名");
+					return;
+				}
+				if (that.userPin == "" || that.userPin.length < 6) {
+					that.showMessage("info", "请正确输入密码");
+					return;
+				}
+
+				that.loading = true;
+
+				$.ajax({
+					url: "./toLogin",
+					type: "post",
+					dataType: "json",
+					data: {
+						userName: that.userName,
+						userPin: that.userPin
+					},
+					error: function (e) {
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+
+						that.showMessage("error", errorTips);
+						that.loading = false;
+						return false;
+					},
+					success: function (ret) {
+						that.loading = false;
+
+						if (ret.code == 200) {
+							window.location.href = ret.data['url'];
+						} else if (ret.code == 4031) {
+							that.ticket = ret.data['ticket'];
+							$("#tokenModal").modal("show");
+
+							that.userName = "";
+							that.userPin = "";
+
+							return;
+						} else if (ret.code == 403) {
+							that.showMessage("warn", "用户名或密码错误");
+							return false;
+						} else if (ret.tips != "") {
+							that.showMessage("error", ret.tips);
+							return false;
+						} else {
+							that.showMessage("error", "系统错误 (" + ret.code + ")");
+							return false;
+						}
+					}
+				})
+			},
+			checkToken: function () {
+				let that = this;
+
+				if (parseInt(that.token.length) != 6) {
+					that.showMessage("info", "请正确输入TOKEN");
+					return;
+				}
+
+				$.ajax({
+					url: "./checkToken",
+					type: "post",
+					dataType: "json",
+					data: {
+						ticket: that.ticket,
+						token: that.token
+					},
+					error: function (e) {
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+
+						that.showMessage("error", errorTips);
+						return false;
+					},
+					success: function (ret) {
+						if (ret.code == 200) {
+							window.location.href = ret.data['url'];
+						} else if (ret.code == 403) {
+							that.showMessage("warn", "TOKEN无效，请重新输入");
+							return false;
+						} else if (ret.code == 4001) {
+							that.showMessage("error", ret.tips);
+							$("#tokenModal").modal("hide");
+							return false;
+						} else if (ret.tips != "") {
+							that.showMessage("error", ret.tips);
+							return false;
+						} else {
+							that.showMessage("error", "系统错误 (" + ret.code + ")");
+							return false;
+						}
+					}
+				})
+			},
+			goback: function () {
+				this.ticket = "";
+				this.token = "";
+				$("#tokenModal").modal("hide");
+			},
+			checkTokenLength: function () {
+				if (parseInt(this.token.length) == 6) {
+					this.disabledCheckToken = false;
+				} else {
+					this.disabledCheckToken = true;
+				}
+			},
+			showMessage: function (level, content) {
+				this.messageCount++;
+				let num = this.messageCount;
+
+				html = '<div class="message-wrap message-enter is-message-' + level + '" id="message_' + num + '">'
+					+ '<i class="' + level + '-icon"></i>'
+					+ '<p class="text-' + level + '" style="margin:14px;">' + content + '</p>'
+					+ '</div>';
+
+				$("#messageContainer").append(html);
+
+				setTimeout(function () {
+					// 隐藏动画
+					$("#message_" + num).attr("style", "opacity:0;animation:tips_animate_hide 1s ease-out");
+
+					// 删除元素
+					setTimeout(function () {
+						$("#message_" + num).remove()
+					}, 500);
+				}, 5000);
+			}
+		},
+	});
+</script>
+
+</html>
