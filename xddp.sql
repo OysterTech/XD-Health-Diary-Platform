@@ -82,7 +82,7 @@ CREATE TABLE `see_file_log` (
   `user_id` int(11) NOT NULL,
   `activity_id` int(11) NOT NULL,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ip` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL
+  `ip` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `user` (

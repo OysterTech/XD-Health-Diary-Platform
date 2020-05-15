@@ -10,32 +10,36 @@
 				<table id="addTable" class="table table-striped table-bordered table-hover"
 					   style="border-radius: 5px; border-collapse: separate;">
 					<tr>
-						<th style="vertical-align: middle;">时间<br><font color="red" style="font-size: 20px;">*</font></th>
+						<th style="vertical-align: middle;">时间<br>
+							<font color="red" style="font-size: 20px;">*</font>
+						</th>
 						<td>
 							<div id="addTime_picker" class="input-group date" data-date-format="yyyy-mm-dd hh:ii">
-								<input id="addTime" class="form-control" size="16" readonly>
+								<input onchange="vm.actDetail.time=this.value" id="addTime" class="form-control"
+									   size="16" readonly>
 								<span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
 								<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<th style="vertical-align: middle;">内容<br><font color="red" style="font-size: 20px;">*</font></th>
-						<td><textarea v-model="addContent" class="form-control" rows="3"></textarea>
+						<th style="vertical-align: middle;">内容<br>
+							<font color="red" style="font-size: 20px;">*</font>
+						</th>
+						<td><textarea v-model="actDetail.content" class="form-control" rows="3"></textarea>
 						</td>
 					</tr>
 					<tr>
 						<th style="vertical-align: middle;">图片</th>
 						<td id="uploadImageForm">
-							<input type="hidden" id="imageUrl">
-							<div class="input-group">
-								<span class="input-group-addon">1</span>
-								<input type="file" id="uploadImage_1" multiple="multiple" class="form-control">
+							<div v-for="(imgUrl,imgIndex) in actDetail.imageUrl" :key="imgIndex" class="input-group">
+								<span class="input-group-addon">{{imgIndex}}</span>
+								<input type="file" :id="['uploadImage_']+imgIndex" multiple="multiple"
+									   class="form-control">
 								<span class="input-group-btn">
-									<button class="btn btn-primary" id="uploadImage_btn_1"
-											@click="toUpload(1)">上传</button>
-									<button class="btn btn-purple" id="manualUrl_btn_1"
-											@click="manualInputImageUrl(1)">手输</button>
+									<button v-show="imgUrl==''" class="btn btn-primary"
+											@click="toUpload(imgIndex)">上传</button>
+									<button class="btn btn-purple" @click="manualInputImageUrl(imgIndex)">手输</button>
 								</span>
 							</div>
 						</td>
@@ -43,7 +47,8 @@
 					<tr v-for="(info, index) in enumTypeList" :key="index">
 						<th style="vertical-align: middle;">{{info.name}}</th>
 						<td>
-							<input @click="getEnum(info.type,info.name,info.multiple)" :value="checkedEnumName[info.type]" class="form-control" readonly>
+							<input @click="getEnum(info.type,info.name,info.multiple)"
+								   :value="checkedEnumName[info.type]" class="form-control" readonly>
 						</td>
 					</tr>
 

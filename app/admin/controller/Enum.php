@@ -9,20 +9,20 @@ class Enum extends BaseController
 {
 	public function index()
 	{
-		return view('home');
+		return view('/index/home');
 	}
 	
 	
 	public function getTypeList()
 	{
 		EnumType::select();
-		return view('home');
+		return view('/index/home');
 	}
 	
 	
 	public function getList()
 	{
 		EnumList::select();
-		return view('home');
+		return view('/index/home');
 	}
 }

@@ -1,0 +1,140 @@
+<?php
+/**
+ * @name 个人健康日记平台-V-导航栏
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-05-10
+ * @version 2020-05-10
+ */
+?>
+<div id="header">
+	<header class="main-header">
+		<a :href="rootUrl" class="logo">
+			<span class="logo-mini"><img src="https://www.xshgzs.com/resource/index/images/logo2.png"
+					 style="width:85%"></span>
+			<span class="logo-lg"><img src="https://www.xshgzs.com/resource/index/images/logo2.png"
+					 style="width:20%"> <b>生蚝科技</b></span>
+		</a>
+		<nav class="navbar navbar-static-top">
+			<a class="sidebar-toggle" data-toggle="push-menu" role="button"><i class="fas fa-bars"></i></a>
+
+			<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+					<li class="dropdown user user-menu">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<img src="https://static.xshgzs.com/image/user.png" class="user-image">
+							<span class="hidden-xs">{{userInfo['nickName']}}</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li class="user-header">
+								<img src="https://static.xshgzs.com/image/user.png" class="img-circle">
+								<p>{{userInfo['userName']}} - {{userInfo['nickName']}}
+									<!--small>Member since ?</small-->
+								</p>
+							</li>
+							<!-- Menu Footer-->
+							<li class="user-footer">
+								<div class="pull-left">
+									<a @click="addTab('__userProfile','{:url('/index/user/profile')}','用户资料')"
+									   class="btn btn-default btn-flat">用户中心</a>
+								</div>
+								<div class="pull-right">
+									<button data-toggle="modal" data-target="#logoutModal"
+											class="btn btn-default btn-flat">登出</button>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+
+	<!-- 侧边导航栏 -->
+	<aside class="main-sidebar">
+		<section class="sidebar">
+			<div class="user-panel">
+				<div class="pull-left image">
+					<img src="https://static.xshgzs.com/image/user.png" class="img-circle">
+				</div>
+				<div class="pull-left info">
+					<p>{{userInfo['nickName']}}</p>
+				</div>
+			</div>
+			<!-- 菜单树 -->
+			<ul class="sidebar-menu" data-widget="tree">
+				<li>
+					<a :href="rootUrl">
+						<i class="fas fa-home"></i> 系统主页面
+					</a>
+				</li>
+				
+				<li>
+					<a><i class="fas fa-users-cog"></i> 用户管理</a>
+				</li>
+
+				<li>
+					<a><i class="fas fa-book"></i> 枚举管理
+</a>
+				</li>
+
+				<li>
+					<a><i class="fas fa-dashboard"></i> 首页看板设置
+</a>
+				</li>
+
+				<li class="treeview">
+					<a href="#">
+						<i class="fas fa-database"></i> 系统管理
+						<span class="pull-right-container"><i class="fas fa-angle-left pull-right"></i></span>
+					</a>
+					<ul class="treeview-menu">
+				<li>
+					<a><i class="fas fa-book"></i> 用户管理</a>
+				</li>
+				<li>
+					<a><i class="fas fa-link"></i> 外链跳转管理</a>
+				</li>
+
+				<li class="treeview">
+					<a href="#">
+						<i class="fas fa-database"></i> 日志管理
+						<span class="pull-right-container"><i class="fas fa-angle-left pull-right"></i></span>
+					</a>
+					<ul class="treeview-menu">
+					<li>
+					<a><i class="fas fa-book"></i> 附件查看日志</a>
+				</li>
+					<li>
+					<a><i class="fas fa-book"></i> 接口请求日志</a>
+				</li>
+					</ul>
+				</li>
+					</ul>
+				</li>
+			</ul>
+			<!-- /.菜单树 -->
+		</section>
+	</aside><!-- /.侧边导航栏 -->
+
+	<div class="modal modal-primary fade" id="logoutModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+							  aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">登出提示</h4>
+				</div>
+				<div class="modal-body">
+					<h3 style="line-height:38px;">确认要退出吗？</h3>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-outline pull-left" data-dismiss="modal">&lt; 取消</button>
+					<button class="btn btn-outline" @click="navbarLogout">确认登出 &gt;</a>
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.modal -->
+</div>

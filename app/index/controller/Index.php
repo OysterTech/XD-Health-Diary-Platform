@@ -17,6 +17,12 @@ use think\facade\Session;
 
 class Index extends BaseController
 {
+	public function index()
+	{
+		die('health ok!');
+	}
+	
+	
 	public function main()
 	{
 		if (!Session::has('userId')) {
@@ -124,8 +130,8 @@ class Index extends BaseController
 	{
 		$key = inputGet('key', 0);
 
-		if ($key === '2581979df3657a27664cc02aeb9d1083') {
-			die(header('location: https://twitter.com/tt2020joyster/status/1258984341222199296?s=09'));
+		if ($key === 'test') {
+			die(header('location: https://www.baidu.com'));
 		} else {
 			return view('common@/error', ['status' => 'error', 'errorTips' => '非法外链key<br>如有疑问，请联系技术支持']);
 		}

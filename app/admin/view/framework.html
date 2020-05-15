@@ -1,0 +1,106 @@
+<?php
+/**
+ * @name 个人健康日记平台-V-主框架
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-05-10
+ * @version 2020-05-10
+ */
+?>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/admin-lte/2.4.8/css/AdminLTE.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/datatables/1.10.19/css/dataTables.bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/zTree.v3/3.5.28/css/zTreeStyle/zTreeStyle.min.css">
+	<link rel="stylesheet" href="https://static.xshgzs.com/css/adminlte_cyan.css">
+
+	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/fontawesome.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/solid.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/brands.min.css">
+
+	<script src="https://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+	<!-- 开发环境版本，包含了有帮助的命令行警告 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/admin-lte/2.4.8/js/adminlte.min.js"></script>
+	<script src="https://cdn.bootcss.com/datatables/1.10.16/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.bootcss.com/datatables/1.10.16/js/dataTables.bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/zTree.v3/3.5.28/js/jquery.ztree.core.min.js"></script>
+	<script src="https://cdn.bootcss.com/zTree.v3/3.5.28/js/jquery.ztree.excheck.min.js"></script>
+	<script src="https://cdn.bootcss.com/zTree.v3/3.5.28/js/jquery.ztree.exedit.min.js"></script>
+	<script src="https://cdn.bootcss.com/zTree.v3/3.5.33/js/jquery.ztree.exhide.min.js"></script>
+
+	<script src="https://static.xshgzs.com/js/dataTables.responsive.js"></script>
+	<script src="https://static.xshgzs.com/js/utils.js"></script>
+
+	<style>
+		th {
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		.modal {
+			overflow-y: auto;
+		}
+
+		.main-header .sidebar-toggle:before {
+			content: "";
+		}
+	</style>
+
+</head>
+
+<body class="hold-transition skin-cyan sidebar-mini">
+	<div class="wrapper">
+
+		{include file='/navbar' /}
+
+		<!-- 页面内容 -->
+		<div id="app" class="content-wrapper">
+			<!-- 页面主要内容 -->
+			<section class="content">
+				{block name="body"}body{/block}
+			</section>
+			<!-- ./页面主要内容 -->
+		</div>
+		<!-- ./页面内容 -->
+
+		<!-- 脚部版权 -->
+		<footer class="main-footer">
+			<div class="pull-right hidden-xs">
+				<b>Version</b> 2.0.0
+			</div>
+
+			<strong>Copyright &copy; <a href="https://www.xshgzs.com/?from=xddp">生蚝科技</a>
+				2014-<?=date("Y");?>.</strong> All rights reserved.
+			<a style="color:#07C160" data-toggle="modal" data-target="#wxModal"><i class="fab fa-weixin fa-lg"
+				   aria-hidden="true"></i></a>
+			<a style="color:#FF7043" onclick='launchQQ()'><i class="fab fa-qq fa-lg" aria-hidden="true"></i></a>
+			<a style="color:#29B6F6" href="mailto:master@xshgzs.com"><i class="fas fa-envelope fa-lg"
+				   aria-hidden="true"></i></a>
+			<a style="color:#AB47BC" href="https://github.com/OysterTech" target="_blank"><i class="fab fa-github fa-lg"
+				   aria-hidden="true"></i></a>
+		</footer>
+
+		<script>
+			function launchQQ() {
+				if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+					window.location.href = "mqqwpa://im/chat?chat_type=wpa&uin=571339406";
+				} else {
+					window.open("http://wpa.qq.com/msgrd?v=3&uin=571339406");
+				}
+			}
+		</script>
+		<!-- /.脚部版权 -->
+
+	</div>
+	<!-- ./Page -->
+	</div>
+</body>
+
+</html>

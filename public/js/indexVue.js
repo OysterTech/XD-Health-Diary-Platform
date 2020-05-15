@@ -2,7 +2,7 @@
  * @name 个人健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
- * @version 2020-05-01
+ * @version 2020-05-15
  */
 
 var vm = new Vue({
@@ -22,7 +22,6 @@ var vm = new Vue({
 			todayXieList: [], // 今天act的列表
 			showImageList: [], // 当前act的图片列表
 			actDate: "", // 当前act列表的日期
-			addContent: "", // 新增act的内容
 			enumList: [],// 所有枚举
 			enumTypeList: [],// 所有枚举类型
 			nowEnumType: "",// 当前枚举类型
@@ -32,6 +31,11 @@ var vm = new Vue({
 			checkedEnumName: [],// 所有被选中枚举的名称
 			chooseItemModalName: '',
 			chooseItemMultiple: false,
+			actDetail: {
+				time: '',
+				content: '',
+				imageUrl: ['']
+			}, // 新增活动的详细内容
 		}
 	},
 	components: {
@@ -583,25 +587,13 @@ var vm = new Vue({
 			})
 		},
 		goact: function () {
-			html = "" +
-				'<input type="hidden" id="imageUrl">' +
-				'<div class="input-group">' +
-				'<span class="input-group-addon">1</span>' +
-				'<input type="file" id="uploadImage_1" multiple="multiple" class="form-control">' +
-				'<span class="input-group-btn">' +
-				'<button class="btn btn-primary" id="uploadImage_btn_1" onclick="vm.toUpload(1)">上传</button>' +
-				'<button class="btn btn-purple" id="manualUrl_btn_1" onclick="vm.manualInputImageUrl(1)">手输</button>' +
-				'</span>' +
-				'</div>';
-
-			$("#uploadImageForm").html(html);
 			$('#actModal').modal('show');
 		},
 		toAdd: function () {
 			let that = this;
-			let content = this.addContent;
-			let datetime = $("#addTime").val();
-			let imageUrl = $("#imageUrl").val();
+			let content = this.actDetail.content;
+			let datetime = this.actDetail.time;
+			let imageUrl = this.actDetail.imageUrl;
 
 			if (content == "" || datetime == "") {
 				showModalTips("别那么着急嘛<br>填好所有信息再提交哦<hr>Tips:先收拾好战场!!");
@@ -618,10 +610,6 @@ var vm = new Vue({
 			// 去掉月日前的0
 			month = (month.substr(0, 1) == "0") ? month.substr(1) : month;
 			day = (day.substr(0, 1) == "0") ? day.substr(1) : day;
-
-			// 处理图片地址
-			imageUrl = (imageUrl.length >= 1) ? imageUrl.substr(0, imageUrl.length - 1) : "";
-			imageUrl = JSON.stringify(imageUrl.split(","));
 
 			// 获取当前已选中的枚举值
 			let enumList = this.checkedEnumList;
@@ -709,6 +697,7 @@ var vm = new Vue({
 			}
 		},
 		toUpload: function (id = 0) {
+			let that = this;
 			var fileList = $("#uploadImage_" + id).get(0).files;
 
 			if (fileList.length != 1) {
@@ -735,32 +724,19 @@ var vm = new Vue({
 				dataType: "json",
 				error: function (e) {
 					unlockScreen();
-					showModalTips("你的图片太涩了<br>服务器都不敢看了啊<hr>……服务器未知错误……");
-					console.log('e', e);
+					console.log(e);
+					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
 				},
 				success: function (ret) {
 					unlockScreen();
 
 					if (ret.code == 200) {
 						url = ret.data['url'];
-						$("#imageUrl").val($("#imageUrl").val() + url + ",");
-
-						nextId = id + 1;
-						$("#uploadImage_" + id).attr("disabled", true);
-						$("#uploadImage_btn_" + id).attr("disabled", true);
-						$("#manualUrl_btn_" + id).attr("disabled", true);
-
-						var html = '' +
-							'<div class="input-group">' +
-							'<span class="input-group-addon">' + nextId + '</span>' +
-							'<input type="file" id="uploadImage_' + nextId + '" multiple="multiple" class="form-control">' +
-							'<span class="input-group-btn">' +
-							'<button class="btn btn-primary" id="uploadImage_btn_' + nextId + '" onclick="toUpload(' + nextId + ')">上传</button>' +
-							'<button class="btn btn-purple" id="manualUrl_btn_' + nextId + '" onclick="manualInputImageUrl(' + nextId + ')">手输</button>' +
-							'</span>' +
-							'</div>';
-
-						$("#uploadImageForm").append(html);
+						that.actDetail.imageUrl[id] = url;
+						that.actDetail.imageUrl.push('');
+						return true;
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
@@ -779,10 +755,8 @@ var vm = new Vue({
 				return false;
 			}
 
-			$("#imageUrl").val($("#imageUrl").val() + url + ",");
-
-			// 隐藏上传按钮，防止再次上传
-			$("#uploadImage_btn_" + id).hide();
+			this.actDetail.imageUrl[id] = url;
+			this.actDetail.imageUrl.push('');
 
 			// 修改input状态
 			$("#uploadImage_" + id).attr("type", "text");
@@ -792,19 +766,6 @@ var vm = new Vue({
 			$("#manualUrl_btn_" + id).attr("disabled", true);
 			//$("#manualUrl_btn_" + id).attr("class", "btn btn-danger");
 			//$("#manualUrl_btn_" + id).html("修改");
-
-			nextId = id + 1;
-			var html = '' +
-				'<div class="input-group">' +
-				'<span class="input-group-addon">' + nextId + '</span>' +
-				'<input type="file" id="uploadImage_' + nextId + '" multiple="multiple" class="form-control">' +
-				'<span class="input-group-btn">' +
-				'<button class="btn btn-primary" id="uploadImage_btn_' + nextId + '" onclick="toUpload(' + nextId + ')">上传</button>' +
-				'<button class="btn btn-purple" id="manualUrl_btn_' + nextId + '" onclick="manualInputImageUrl(' + nextId + ')">手输</button>' +
-				'</span>' +
-				'</div>';
-
-			$("#uploadImageForm").append(html);
 		},
 	}
 });

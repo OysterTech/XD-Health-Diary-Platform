@@ -4,12 +4,13 @@
  * @name 个人健康日记平台-C-记录
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-28
- * @version 2020-05-01
+ * @version 2020-05-15
  */
 
 namespace app\api\controller;
 
 use app\BaseController;
+use think\facade\Config;
 use app\common\model\ActivityList;
 use app\common\model\ActivityEnum;
 
@@ -24,8 +25,12 @@ class Activity extends BaseController
 		$day = inputPost('day', 0, 1);
 		$time = inputPost('time', 0, 1);
 		$content = inputPost('content', 0, 1);
-		$imageUrl = inputPost('imageUrl', 0, 1);
+		$imageUrl = inputPost('imageUrl', 1, 1);
 		$enumId = inputPost('enumId', 1, 1);
+
+		foreach ($imageUrl as $key => $url) {
+			$imageUrl[$key] = (strpos($url, Config::get('app.upyun_domain')) !== false) ? $url : Config::get('app.upyun_domain') . $url;
+		}
 
 		// 新增记录
 		$query = ActivityList::create([
@@ -34,7 +39,7 @@ class Activity extends BaseController
 			'day' => $day,
 			'time' => $time,
 			'content' => $content,
-			'img' => $imageUrl
+			'img' => json_encode($imageUrl)
 		]);
 
 		if ($query->id) $id = $query->id;
