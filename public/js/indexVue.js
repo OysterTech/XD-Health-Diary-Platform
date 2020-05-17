@@ -2,7 +2,7 @@
  * @name 个人健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
- * @version 2020-05-15
+ * @version 2020-05-17
  */
 
 var vm = new Vue({
@@ -86,9 +86,9 @@ var vm = new Vue({
 						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
 					}
 
-					that.makePieChart('monthToy', 'toy', true);
-					that.makePieChart('monthPlace', 'place', false);
-					that.makePieChart('shot', 'shot', true);
+					that.makePieChart('monthToy', 1, true);
+					that.makePieChart('monthPlace', 2, false);
+					that.makePieChart('shot', 3, true);
 					that.makeLineChart();
 					that.makeCountLabel();
 					that.makeLatestTable();
@@ -587,6 +587,12 @@ var vm = new Vue({
 			})
 		},
 		goact: function () {
+			this.actDetail = {
+				time: '',
+				content: '',
+				imageUrl: ['']
+			};
+
 			$('#actModal').modal('show');
 		},
 		toAdd: function () {

@@ -1,0 +1,133 @@
+<?php
+/**
+ * @name 个人健康日记平台-V-枚举管理
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-05-17
+ * @version 2020-05-17
+ */
+?>
+{extend name="/framework" /}
+
+{block name='pageCss'}
+<style>
+	.ztree li span.button.add {
+		margin-left: 2px;
+		margin-right: -1px;
+		background-position: -144px 0;
+		vertical-align: top;
+		*vertical-align: middle
+	}
+
+	ul.ztree {
+		margin-top: 10px;
+		border: 1px solid #617775;
+		background: #f0f6e4;
+		height: 360px;
+		overflow-y: scroll;
+		overflow-x: auto;
+	}
+</style>
+{/block}
+
+{block name='body'}
+<ul id="ztree" class="ztree"></ul>
+{/block}
+
+{block name='vueScript'}
+<script>
+	var vm = new Vue({
+		el: '#app',
+		data: {
+			token: "{$token}",
+			enumList: [],
+			setting: {
+				view: {
+					selectedMulti: false,
+					showIcon: false,
+					//addHoverDom: addHoverDom,
+					//removeHoverDom: removeHoverDom,
+				},
+				callback: {
+					onClick: onclickNode
+				},
+				data: {
+					simpleData: {
+						enable: true
+					}
+				}
+			}
+		},
+		methods: {
+			makeTree: function () {
+				let that = this;
+
+				try {
+					$.fn.zTree.destroy();
+				} catch {
+
+				}
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "enum/getTypeListForZtree",
+					data: { token: that.token },
+					dataType: "json",
+					async: false,
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					},
+					success: function (ret) {
+						if (ret.code == 200) {
+							$.fn.zTree.init($("#ztree"), that.setting, ret.data.nodes);
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						}
+					}
+				});
+			},
+			getEnum: function (typeId = 0) {
+				let that = this;
+
+				$.ajax({
+					url: window.CONFIG.apiPath + "enum/list",
+					data: {
+						token: that.token,
+						type: typeId
+					},
+					dataType: "json",
+					async: false,
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					},
+					success: function (ret) {
+						if (ret.code == 200) {
+							that.enumList = ret.data['list'];
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						}
+					}
+				});
+			}
+		},
+		mounted() {
+			this.makeTree();
+		},
+	});
+
+	function onclickNode(event, treeId, node) {
+		console.log(node);
+		vm.getEnum(node.id);
+	}
+</script>
+{/block}

@@ -38,5 +38,11 @@ return [
 	 * 是否开启双因子认证（GA）
 	 * @version 2020-05-10
 	 */
-	'use_2fa_token'    => true,
+	'use_2fa_token'    => false,
+
+	/**
+	 * 又拍云文件储存域名
+	 * @version 2020-05-15
+	 */
+	'upyun_domain'    => 'https://cdn.xie.xshgzs.com/',
 ];

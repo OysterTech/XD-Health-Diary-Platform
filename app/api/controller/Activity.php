@@ -4,7 +4,7 @@
  * @name 个人健康日记平台-C-记录
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-28
- * @version 2020-05-15
+ * @version 2020-05-17
  */
 
 namespace app\api\controller;
@@ -43,7 +43,7 @@ class Activity extends BaseController
 		]);
 
 		if ($query->id) $id = $query->id;
-		else return packApiData(500, 'Database error', $query);
+		else return packApiData(500, 'Database error', $query, '新增活动失败');
 
 		// 加入枚举
 		if (count($enumId) > 0) {
@@ -93,7 +93,7 @@ class Activity extends BaseController
 		}
 
 		if (count($query) >= 1) return packApiData(200, 'success', $query);
-		else return packApiData(404, 'Activity not found');
+		else return packApiData(404, 'Activity not found', [], '查询当天活动列表失败');
 	}
 
 
@@ -106,6 +106,6 @@ class Activity extends BaseController
 		$query = ActivityList::destroy($id);
 
 		if ($query === true) return packApiData(200, 'success');
-		else return packApiData(500, 'Database error', $query);
+		else return packApiData(500, 'Database error', $query, '删除活动失败');
 	}
 }

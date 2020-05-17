@@ -9,15 +9,30 @@ use think\facade\Session;
  * @param  string $token 令牌
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-01
- * @version 2020-05-03
+ * @version 2020-05-17
  */
 function checkToken($token = '')
 {
 	if (Session::has('token') && Session::get('token') === $token) {
 		return true;
 	} else {
-		packApiData(403001, 'Invalid token', [], '接口令牌无效');
+		packApiData(403001, 'Invalid token', [], '接口令牌无效', false, true);
 	}
+}
+
+
+/**
+ * createToken 生成接口令牌
+ * @return string 令牌
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-05-17
+ * @version 2020-05-17
+ */
+function createToken()
+{
+	$token = sha1(time() . mt_rand());
+	Session::set('token', $token);
+	return $token;
 }
 
 
@@ -59,17 +74,18 @@ function getIP()
 
 /**
  * packApiData ajax返回统一标准json字符串
- * @param  integer $code       状态码
- * @param  string  $message    英文提示内容
- * @param  array   $data       返回数据
- * @param  string  $tips       中文提示语
- * @param  boolean  $needLog   是否需要日志记录
- * @return string/array/die
+ * @param  integer  $code       状态码
+ * @param  string   $message    英文提示内容
+ * @param  array    $data       返回数据
+ * @param  string   $tips       中文提示语
+ * @param  boolean  $needLog    是否需要日志记录
+ * @param  boolean  $isDie      是否直接die输出
+ * @return string/die
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2019-11-17
- * @version 2020-05-10
+ * @version 2020-05-17
  */
-function packApiData($code = 0, $message = '', $data = [], $tips = '', $needLog = true)
+function packApiData($code = 0, $message = '', $data = [], $tips = '', $needLog = true, $isDie = false)
 {
 	$reqId = makeUUID();
 
@@ -82,17 +98,22 @@ function packApiData($code = 0, $message = '', $data = [], $tips = '', $needLog 
 		'requestId' => $reqId
 	);
 
-	if ($code !== 403001 && $needLog === true) ApiRequestLog::create([
-		'request_id' => $reqId,
-		'path' => Request::baseUrl(),
-		'ip' => getIP(),
-		'code' => $code,
-		'message' => $message,
-		'req_data' => json_encode(Request::except(['token'])),
-		'res_data' => json_encode($data),
-	]);
+	if ($code !== 403001 && $needLog === true) {
+		ApiRequestLog::create([
+			'request_id' => $reqId,
+			'path' => Request::baseUrl(),
+			'ip' => getIP(),
+			'code' => $code,
+			'message' => $message,
+			'req_data' => json_encode(Request::except(['token'])),
+			'res_data' => json_encode($data),
+		]);
+	} else {
+		unset($r['requestId']);
+	}
 
-	return json($r);
+	if ($isDie === true) die(json_encode($r));
+	else return json($r);
 }
 
 
@@ -140,14 +161,14 @@ function inputGet($dataName = '', $allowNull = 0, $isAjax = 0, $errorCode = 0, $
 
 	if (isset($_GET[$dataName])) {
 		if ($allowNull != 1 && $_GET[$dataName] == "") {
-			return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, 'die') : die();
+			return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, false, true) : die();
 		} else {
 			return $_GET[$dataName];
 		}
 	} elseif ($allowNull == 1) {
 		return;
 	} else {
-		return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, 'die') : die();
+		return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, false, true) : die();
 	}
 }
 
@@ -179,14 +200,14 @@ function inputPost($dataName = '', $allowNull = 0, $isAjax = 0, $errorCode = 0, 
 
 	if (isset($postdata[$dataName])) {
 		if ($allowNull != 1 && $postdata[$dataName] == "") {
-			return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, 'die') : die();
+			return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, false, true) : die();
 		} else {
 			return $postdata[$dataName];
 		}
 	} elseif ($allowNull == 1) {
 		return null;
 	} else {
-		return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, 'die') : die();
+		return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, false, true) : die();
 	}
 }
 
