@@ -56,6 +56,8 @@ class ExceptionHandle extends Handle
 		// 添加自定义异常处理机制
 		$statusCode = (($e instanceof HttpException)) ? $e->getStatusCode() : $e->getCode();
 
+		if ($statusCode === 404) return parent::render($request, $e);
+
 		ApiRequestLog::create([
 			'request_id' => makeUUID(),
 			'path' => Request::baseUrl(),
