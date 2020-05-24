@@ -5,7 +5,7 @@
 
 return [
 	// 应用地址
-	'app_host'         => env('app.host', ''),
+	'app_host'         => env('app.host', 'aa'),
 	// 应用的命名空间
 	'app_namespace'    => '',
 	// 是否启用路由
@@ -42,7 +42,7 @@ return [
 
 	/**
 	 * 又拍云文件储存域名
-	 * @version 2020-05-15
+	 * @version 2020-05-24
 	 */
-	'upyun_domain'    => 'https://cdn.xie.xshgzs.com/',
+	'upyun_domain'    => env('app.UPYUN_DOMAIN', ''),
 ];
