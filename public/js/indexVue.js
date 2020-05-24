@@ -2,7 +2,7 @@
  * @name 个人健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
- * @version 2020-05-17
+ * @version 2020-05-24
  */
 
 var vm = new Vue({
@@ -520,15 +520,6 @@ var vm = new Vue({
 
 						that.todayXieList = data;
 						that.actDate = year + "-" + month + "-" + day;
-
-						if (isPhone()) {
-							$('#listTable').find('th:eq(1)').hide();
-							$('#listTable').find('tr').find('td:eq(1)').hide();
-						} else {
-							$('#listTable').find('th:eq(1)').show();
-							$('#listTable').find('tr').find('td:eq(1)').show();
-							$('[id^="showContentBtn_"]').hide();
-						}
 
 						$('#listModal').modal('show');
 					} else if (ret.tips !== '') {
