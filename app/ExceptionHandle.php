@@ -12,6 +12,7 @@ use think\exception\ValidateException;
 use think\Response;
 use Throwable;
 use think\facade\Request;
+use think\facade\Session;
 
 /**
  * 应用异常处理类
@@ -61,15 +62,17 @@ class ExceptionHandle extends Handle
 		ApiRequestLog::create([
 			'request_id' => makeUUID(),
 			'path' => Request::baseUrl(),
+			'referer' => $_SERVER['HTTP_REFERER'] ?? '.',
 			'ip' => getIP(),
 			'code' => $statusCode,
 			'message' => $e->getMessage(),
+			'user_id' => (Session::has('userId')) ? Session::get('userId') : 0,
 			'req_data' => json_encode(Request::except(['token'])),
 			'res_data' => json_encode([
 				'file' => $e->getFile(),
 				'line' => $e->getLine(),
 				//'trace' => $e->getTrace(),
-				'session' => \think\facade\Session::all()
+				'session' => Session::all()
 			]),
 		]);
 
