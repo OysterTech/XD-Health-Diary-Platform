@@ -4,7 +4,7 @@
  * @name 个人健康日记平台-C-记录
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-28
- * @version 2020-05-17
+ * @version 2020-05-26
  */
 
 namespace app\api\controller;
@@ -29,7 +29,7 @@ class Activity extends BaseController
 		$enumId = inputPost('enumId', 1, 1);
 
 		foreach ($imageUrl as $key => $url) {
-			$imageUrl[$key] = (strpos($url, Config::get('app.upyun_domain')) !== false) ? $url : Config::get('app.upyun_domain') . $url;
+			$imageUrl[$key] = (strpos($url, Config::get('app.upyun_domain')) !== false) ? $url : (($url !== '') ? Config::get('app.upyun_domain') . $url : '');
 		}
 
 		// 新增记录
