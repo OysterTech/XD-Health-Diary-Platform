@@ -4,7 +4,7 @@
  * @name 个人健康日记平台-C-枚举
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-28
- * @version 2020-05-17
+ * @version 2020-05-27
  */
 
 namespace app\api\controller;
@@ -19,7 +19,9 @@ class Enum extends BaseController
 	{
 		checkToken(inputGet('token', 0, 1));
 
-		$query = EnumType::select();
+		$query = EnumType::where('is_show', 1)
+			->where('is_delete', 0)
+			->select();
 
 		if (count($query) >= 1) return packApiData(200, 'success', ['data' => $query]);
 		else return packApiData(404, 'Enum type not found', $query, '查询枚举类型失败');
@@ -33,6 +35,7 @@ class Enum extends BaseController
 		$type = inputGet('type', 0, 1);
 
 		$query = EnumList::where('type_id', $type)
+			->where('is_delete', 0)
 			->select();
 
 		if (count($query) >= 1) return packApiData(200, 'success', ['data' => $query]);
