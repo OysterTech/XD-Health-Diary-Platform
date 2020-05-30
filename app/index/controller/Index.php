@@ -4,13 +4,12 @@
  * @name 个人健康日记平台-C-首页
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-24
- * @version 2020-05-10
+ * @version 2020-05-30
  */
 
 namespace app\index\controller;
 
 use app\BaseController;
-use app\common\model\User;
 use app\common\controller\GoogleAuth;
 use think\facade\Config;
 use think\facade\Session;
@@ -25,7 +24,7 @@ class Index extends BaseController
 
 	public function main()
 	{
-		if (!Session::has('userId')) {
+		if (!Session::has('userInfo')) {
 			return redirect('/index/logout');
 		}
 
@@ -54,30 +53,20 @@ class Index extends BaseController
 		$userName = inputPost('userName', 0, 1);
 		$pin = inputPost('userPin', 0, 1);
 
-		$query = User::where('user_name', $userName)->find();
+		$userInfo = Config::get('app.user_info');
+		$salt = $userInfo['salt'];
 
-		if ($query !== null) {
-			$salt = $query->salt;
+		if (sha1($salt . md5($userName . $pin) . $pin) === $userInfo['pin']) {
+			if (Config::get('app.use_2fa_token') === true) {
+				$ticket = sha1(time() . $pin);
 
-			if (sha1($salt . md5($userName . $pin) . $pin) === $query->pin) {
-				$userId = $query->id;
+				Session::set('loginTicket', $ticket);
+				Session::set('loginUserInfo', $userInfo);
 
-				if (Config::get('app.use_2fa_token') === true) {
-					$ticket = sha1(time() . $pin);
-
-					Session::set('loginTicket', $ticket);
-					Session::set('loginUserInfo', [
-						'id' => $userId,
-						'tokenKey' => $query->token_key . 'BS5JGH2EB4PW3MQL'
-					]);
-
-					return packApiData(4031, 'need two factor auth', ['ticket' => $ticket], '请输入二步验证TOKEN', false);
-				} else {
-					$this->setLoginState($userId);
-					return packApiData(200, 'success', ['url' => '/index/main'], '', false);
-				}
+				return packApiData(4031, 'need two factor auth', ['ticket' => $ticket], '请输入二步验证TOKEN', false);
 			} else {
-				return packApiData(403, 'Invalid userName or password', [], '用户名或密码错误');
+				$this->setLoginState($userInfo);
+				return packApiData(200, 'success', ['url' => '/index/main'], '', false);
 			}
 		} else {
 			return packApiData(403, 'Invalid userName or password', [], '用户名或密码错误');
@@ -92,7 +81,6 @@ class Index extends BaseController
 
 		if ($ticket === Session::get('loginTicket')) {
 			$userInfo = Session::get('loginUserInfo');
-			$userId = $userInfo['id'];
 			$tokenKey = $userInfo['tokenKey'];
 		} else {
 			return packApiData(4001, 'Invalid ticket', [], '登录状态已失效！<br>请重新输入密码登录，再进行二步验证', false);
@@ -102,7 +90,7 @@ class Index extends BaseController
 		$checkResult = $ga->verifyCode($tokenKey, $token);
 
 		if ($checkResult) {
-			$this->setLoginState($userId);
+			$this->setLoginState($userInfo);
 
 			return packApiData(200, 'success', ['url' => '/index/main'], '', false);
 		} else {
@@ -111,13 +99,11 @@ class Index extends BaseController
 	}
 
 
-	private function setLoginState($userId = '')
+	private function setLoginState($userInfo = '')
 	{
-		User::update(['last_login' => date('Y-m-d H:i:s')], ['id' => $userId]);
-
 		Session::delete('loginTicket');
 		Session::delete('loginUserInfo');
-		Session::set('userId', $userId);
+		Session::set('userInfo', $userInfo);
 
 		return true;
 	}

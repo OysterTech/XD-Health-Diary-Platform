@@ -66,7 +66,6 @@ class ExceptionHandle extends Handle
 			'ip' => getIP(),
 			'code' => $statusCode,
 			'message' => $e->getMessage(),
-			'user_id' => (Session::has('userId')) ? Session::get('userId') : 0,
 			'req_data' => json_encode(Request::except(['token'])),
 			'res_data' => json_encode([
 				'file' => $e->getFile(),

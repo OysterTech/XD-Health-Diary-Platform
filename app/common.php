@@ -83,7 +83,7 @@ function getIP()
  * @return string/die
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2019-11-17
- * @version 2020-05-24
+ * @version 2020-05-30
  */
 function packApiData($code = 0, $message = '', $data = [], $tips = '', $needLog = true, $isDie = false)
 {
@@ -106,7 +106,6 @@ function packApiData($code = 0, $message = '', $data = [], $tips = '', $needLog 
 			'ip' => getIP(),
 			'code' => $code,
 			'message' => $message,
-			'user_id' => (Session::has('userId')) ? Session::get('userId') : 0,
 			'req_data' => json_encode(Request::except(['token'])),
 			'res_data' => json_encode($data),
 		]);

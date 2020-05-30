@@ -38,11 +38,23 @@ return [
 	 * 是否开启双因子认证（GA）
 	 * @version 2020-05-10
 	 */
-	'use_2fa_token'    => false,
+	'use_2fa_token' => false,
 
 	/**
 	 * 又拍云文件储存域名
 	 * @version 2020-05-24
 	 */
-	'upyun_domain'    => env('app.UPYUN_DOMAIN', ''),
+	'upyun_domain' => env('app.UPYUN_DOMAIN', ''),
+
+	/**
+	 * 登录用户信息
+	 * @version 2020-05-30
+	 */
+	'user_info' => [
+		'userName' => env('user.NAME', ''),
+		'nickName' => env('user.NICK_NAME', ''),
+		'salt' => env('user.SALT', ''),
+		'pin' => env('user.PIN', ''),
+		'tokenKey' => env('user.TOKEN_KEY', '')
+	],
 ];
