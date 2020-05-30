@@ -21,8 +21,8 @@ class Index extends BaseController
 	{
 		die('health ok!');
 	}
-	
-	
+
+
 	public function main()
 	{
 		if (!Session::has('userId')) {
@@ -127,10 +127,8 @@ class Index extends BaseController
 	{
 		$key = inputGet('key', 0);
 
-		if ($key === '2581979df3657a27664cc02aeb9d1083') {
-			die(header('location: https://twitter.com/tt2020joyster/status/1258984341222199296?s=09'));
-		}	elseif ($key === '59c4a212f12e419e9bb4a15c69e0a889') {
-			die(header('location: https://www.xtube.com/profile/jip1006-29480901'));
+		if ($key === 'testkey') {
+			die(header('location: https://baidu.com'));
 		} else {
 			return view('common@/error', ['status' => 'error', 'errorTips' => '非法外链key<br>如有疑问，请联系技术支持']);
 		}

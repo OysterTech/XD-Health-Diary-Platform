@@ -3,7 +3,7 @@
  * @name 个人健康日记平台-V-主框架
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-10
- * @version 2020-05-17
+ * @version 2020-05-26
  */
 ?>
 <!DOCTYPE html>
@@ -18,6 +18,7 @@
 	<link rel="stylesheet" href="https://cdn.bootcss.com/datatables/1.10.19/css/dataTables.bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.bootcss.com/zTree.v3/3.5.28/css/zTreeStyle/zTreeStyle.min.css">
 	<link rel="stylesheet" href="https://static.xshgzs.com/css/adminlte_cyan.css">
+	<link rel="stylesheet" href="https://static.xshgzs.com/css/loading.css">
 
 	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/fontawesome.min.css">
 	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/solid.min.css">
@@ -65,12 +66,14 @@
 		{include file='/navbar' /}
 
 		<!-- 页面内容 -->
-		<div id="app" class="content-wrapper">
-			<!-- 页面主要内容 -->
+		<div class="content-wrapper">
 			<section class="content">
+				<div id="app">
+					{block name="vueBody"} {/block}
+				</div>
+
 				{block name="body"} {/block}
 			</section>
-			<!-- ./页面主要内容 -->
 		</div>
 		<!-- ./页面内容 -->
 
@@ -103,6 +106,24 @@
 		<!-- /.脚部版权 -->
 	</div>
 	<!-- ./Page -->
+	</div>
+
+	<div class="modal fade" id="tipsModal" style="z-index:99999">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+							  class="sr-only">Close</span></button>
+					<h3 class="modal-title" id="tipsTitle">温馨提示</h3>
+				</div>
+				<div class="modal-body">
+					<p id="tips" style="color:#fb7312;font-weight:bold;font-size:23px;text-align:center;"></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">关闭 &gt;</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	{block name="vueScript"} {/block}
