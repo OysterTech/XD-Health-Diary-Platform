@@ -86,8 +86,8 @@ var vm = new Vue({
 						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
 					}
 
-					that.makePieChart('monthToy', 1, true);
-					that.makePieChart('monthPlace', 2, false);
+					that.makePieChart('monthPlace', 1, false);
+					that.makePieChart('monthToy', 2, true);
 					that.makePieChart('shot', 3, true);
 					that.makeLineChart();
 					that.makeCountLabel();
