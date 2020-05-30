@@ -48,10 +48,9 @@
 						<th style="vertical-align: middle;">{{info.name}}</th>
 						<td>
 							<input @click="getEnum(info.id,info.name,info.multiple)"
-								   :value="checkedEnumName[info.type]" class="form-control" readonly>
+								   :value="checkedEnumName[info.id]" class="form-control" readonly>
 						</td>
 					</tr>
-
 				</table>
 			</div>
 			<div class="modal-footer">
