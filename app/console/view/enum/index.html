@@ -3,21 +3,13 @@
  * @name 个人健康日记平台-V-枚举管理
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-17
- * @version 2020-05-29
+ * @version 2020-05-30
  */
 ?>
 {extend name="/framework" /}
 
 {block name='pageCss'}
 <style>
-	.ztree li span.button.add {
-		margin-left: 2px;
-		margin-right: -1px;
-		background-position: -144px 0;
-		vertical-align: top;
-		*vertical-align: middle
-	}
-
 	ul.ztree {
 		margin-top: 10px;
 		border: 1px solid #617775;
@@ -59,10 +51,12 @@
 
 				<center>
 					<button class="btn btn-success" :disabled="nowTypeInfo.isParent===true || nowTypeInfo.id<=0"
-							@click="newValue">&nbsp;&nbsp;新增枚举值&nbsp;&nbsp;</button>
-					<button class="btn btn-info" :disabled="nowTypeInfo.id<=0"
-							@click="readyOperate('update','type',nowTypeInfo.id,nowTypeInfo.name)">&nbsp;&nbsp;修改类型内容&nbsp;&nbsp;</button> | 
-					<button class="btn btn-primary" @click="newType">&nbsp;&nbsp;新增类型&nbsp;&nbsp;</button>
+							@click="readyCU('create','value',nowTypeInfo.id,'')">&nbsp;&nbsp;新增枚举值&nbsp;&nbsp;</button>
+					|
+					<button class="btn btn-primary"
+							@click="readyCU('create','type',nowTypeInfo.id,'')">&nbsp;&nbsp;新增类型&nbsp;&nbsp;</button>
+					<button class="btn btn-warning" :disabled="nowTypeInfo.id<=0"
+							@click="readyCU('update','type',nowTypeInfo.id,nowTypeInfo.name)">&nbsp;&nbsp;修改类型内容&nbsp;&nbsp;</button>
 					<button class="btn btn-danger" :disabled="nowTypeInfo.isParent===true || nowTypeInfo.id<=0"
 							@click="readyDelete('type',nowTypeInfo.id,nowTypeInfo.name)">&nbsp;&nbsp;删除当前类型&nbsp;&nbsp;</button>
 				</center>
@@ -84,12 +78,12 @@
 						<!-- 选中子枚举类型 -->
 						<template v-if="enumList.length>0">
 							<tr v-for="info in enumList">
-								<td>{{info['id']}}</td>
-								<td>{{info['value']}}</td>
-								<td>{{info['update_time']}}</td>
+								<td>{{ info['id'] }}</td>
+								<td>{{ info['value'] }}</td>
+								<td>{{ info['update_time'] }}</td>
 								<td>
 									<button class="btn btn-info"
-											@click="readyOperate('update','value',info['id'],info['value'])">修改</button>
+											@click="readyCU('update','value',info['id'],info['value'])">修改</button>
 									<button class="btn btn-danger"
 											@click="readyDelete('value',info['id'],info['value'])">删除</button>
 								</td>
@@ -97,11 +91,21 @@
 						</template>
 
 						<!-- 选中父枚举类型 -->
-						<template v-else-if="enumList.length==0 && nowTypeInfo.id>0">
+						<template v-else-if="nowTypeInfo.isParent===true">
 							<tr>
 								<td colspan="4" style="font-size: 17px;font-weight: bold;color:#0095ff;">
 									当前选择节点为父枚举类型<br>
 									请选择子枚举类型
+								</td>
+							</tr>
+						</template>
+
+						<!-- 选中类型没有枚举值 -->
+						<template v-else-if="nowTypeInfo.isParent===false && enumList.length<=0">
+							<tr>
+								<td colspan="4" style="font-size: 17px;font-weight: bold;color:#0095ff;">
+									当前选择的枚举类型无枚举值<br>
+									请新增枚举值
 								</td>
 							</tr>
 						</template>
@@ -130,7 +134,8 @@
 			<div class="modal-body">
 				<p style="color:#fb7312;font-weight:bold;font-size:21px;text-align:center;">
 					您确认要删除<br>
-					{{deleteInfo.type=='type' ? '枚举父类型' : '枚举值'}} [<font color="#07b6fc">{{deleteInfo.name}}</font>] 吗？
+					{{ deleteInfo.type=='type' ? '枚举父类型' : '枚举值' }} [<font color="#07b6fc">{{ deleteInfo.name }}</font>]
+					吗？
 				</p>
 			</div>
 			<div class="modal-footer">
@@ -148,25 +153,31 @@
 				<button class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
 						  class="sr-only">Close</span></button>
 				<h3 class="modal-title">
-					{{(CUInfo.operateType=='create'?'新建':'修改')}}
-					<b style="color:#fb7312">{{(CUInfo.type=='type'?'父类型':'枚举值')}}</b>
-					&nbsp;[<font color="#127afb">{{CUInfo.name}}</font>]
+					{{ CUInfo.operateType=='create'?'新建':'修改' }}
+					<b style="color:#fb7312">{{ CUInfo.type=='type'?'父类型':'枚举值' }}</b>
+					&nbsp;[<font color="#127afb">{{ CUInfo.name }}</font>]
 				</h3>
 			</div>
 			<div class="modal-body">
 				<table class="table table-striped table-bordered table-hover"
 					   style="border-radius: 5px; border-collapse: separate;">
-					<tr>
-						<th style="vertical-align: middle;">{{(CUInfo.type=='type'?'父类型名称':'枚举值')}}</th>
+					<tr v-if="CUInfo.operateType==='update'">
+						<th style="vertical-align: middle;">ID</th>
 						<td>
-							<input :value="CUInfo.name" class="form-control">
+							<input :value="CUInfo.id" class="form-control" disabled>
+						</td>
+					</tr>
+					<tr>
+						<th style="vertical-align: middle;">{{ CUInfo.type=='type'?'父类型名称':'枚举值' }}</th>
+						<td>
+							<input v-model="CUInfo.value" class="form-control">
 						</td>
 					</tr>
 				</table>
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
-				<button class="btn btn-danger" @click="toDelete">确认 &gt;</button>
+				<button class="btn btn-danger" @click="toCU">确认 &gt;</button>
 			</div>
 		</div>
 	</div>
@@ -194,15 +205,10 @@
 				operateType: "",
 				type: "",
 				id: 0,
+				name: "",
 				value: ""
 			},
 			setting: {
-				view: {
-					selectedMulti: false,
-					showIcon: false,
-					//addHoverDom: addHoverDom,
-					//removeHoverDom: removeHoverDom,
-				},
 				callback: {
 					onClick: onclickNode
 				},
@@ -295,6 +301,7 @@
 				let that = this;
 
 				lockScreen();
+				$("#deleteModal").modal("hide");
 
 				$.ajax({
 					url: window.CONFIG.consoleApiPath + "enum/delete",
@@ -318,8 +325,17 @@
 							alert("删除成功！");
 
 							// 按照删除类型重新加载
-							if (type == "value") that.getEnum(that.nowTypeInfo.id, that.nowTypeInfo.name);
-							else that.makeTree();
+							if (that.deleteInfo.type == "value") {
+								that.getEnum(that.nowTypeInfo.id, that.nowTypeInfo.name);
+							} else {
+								that.enumList = [];
+								that.nowTypeInfo = {
+									id: 0,
+									name: "",
+									isParent: false
+								};
+								that.makeTree();
+							}
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
@@ -328,22 +344,55 @@
 					}
 				});
 			},
-			readyOperate: function (operateType, type, id, value) {
-				let that = this;
-
-				that.CUInfo.operateType = operateType;
-				that.CUInfo.type = type;
-				that.CUInfo.id = id;
-				that.CUInfo.name = value;
+			readyCU: function (operateType, type, id, value) {
+				this.CUInfo.operateType = operateType;
+				this.CUInfo.type = type;
+				this.CUInfo.id = id;
+				this.CUInfo.name = value;
+				this.CUInfo.value = value;// 分开是为了modal标题不变而实现v-model
 
 				$("#CUModal").modal("show");
 				return true;
 			},
-			newType: function () {
+			toCU: function () {
+				let that = this;
+				let CUInfo = that.CUInfo;
+				delete CUInfo.name;
 
-			},
-			newValue: function () {
+				lockScreen();
+				$("#CUModal").modal("hide");
 
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "enum/toCU",
+					type: "post",
+					dataType: "json",
+					data: {
+						token: that.token,
+						cuInfo: CUInfo
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							alert("操作成功！");
+
+							// 按照删除类型重新加载
+							if (that.CUInfo.type == "value") that.getEnum(that.nowTypeInfo.id, that.nowTypeInfo.name);
+							else that.makeTree();
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						}
+					}
+				})
 			}
 		},
 		mounted() {

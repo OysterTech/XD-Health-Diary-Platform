@@ -4,7 +4,7 @@
  * @name 个人健康日记平台-C-后台-枚举
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-09
- * @version 2020-05-29
+ * @version 2020-05-30
  */
 
 namespace app\console\controller;
@@ -21,9 +21,32 @@ class Enum extends BaseController
 	}
 
 
-	public function delete()
+	public function getTypeListForZtree()
 	{
 		checkToken(inputGet('token', 0, 1));
+
+		$query = EnumType::where('is_delete', 0)
+			->select();
+
+		if (count($query) >= 1) {
+			$nodes = [];
+
+			foreach ($query as $key => $info) {
+				$nodes[$key]['id'] = $info['id'];
+				$nodes[$key]['pId'] = $info['pid'];
+				$nodes[$key]['name'] = $info['name'];
+			}
+
+			return packApiData(200, 'success', ['nodes' => $nodes]);
+		} else {
+			return packApiData(404, 'Enum type not found', $query);
+		}
+	}
+
+
+	public function delete()
+	{
+		checkToken(inputPost('token', 0, 1));
 
 		$deleteInfo = inputPost('info', 0, 1);
 		$type = $deleteInfo['type'];
@@ -52,35 +75,44 @@ class Enum extends BaseController
 	}
 
 
-	public function getTypeListForZtree()
+	public function changeIsShow()
 	{
-		checkToken(inputGet('token', 0, 1));
+		checkToken(inputPost('token', 0, 1));
 
-		$query = EnumType::where('is_delete', 0)
-			->select();
+		$id = inputPost('id', 0, 1);
+		$isShow = inputPost('isShow', 0, 1);
 
-		if (count($query) >= 1) {
-			$nodes = [];
+		$query = EnumType::update([
+			'is_show' => $isShow
+		], ['id' => $id]);
 
-			foreach ($query as $key => $info) {
-				$nodes[$key]['id'] = $info['id'];
-				$nodes[$key]['pId'] = $info['pid'];
-				$nodes[$key]['name'] = $info['name'];
-			}
+		if ($query['is_show']) return packApiData(200, 'success');
+		else return packApiData(500, 'Database error', [$query], '修改枚举父类型的显示状态失败');
+	}
 
-			return packApiData(200, 'success', ['nodes' => $nodes]);
+
+	public function toCU()
+	{
+		checkToken(inputPost('token', 0, 1));
+
+		$cuInfo = inputPost('cuInfo', 0, 1);
+		$cuType = $cuInfo['operateType'];
+		$type = $cuInfo['type'];
+		$id = $cuInfo['id'];
+		$value = $cuInfo['value'];
+
+		if ($cuType == 'update') {
+			return self::update($id, $type, $value);
+		} elseif ($cuType == 'create') {
+			return self::create($id, $type, $value);
 		} else {
-			return packApiData(404, 'Enum type not found', $query);
+			return packApiData(5002, 'Invalid cu type', [], '非法操作行为');
 		}
 	}
 
 
-	public function update()
+	private static function update($id = 0, $type = '', $value = '')
 	{
-		$id = inputPost('id', 0, 1);
-		$type = inputPost('type', 0, 1);
-		$value = inputPost('value', 0, 1);
-
 		if ($type == 'type') {
 			$query = EnumType::update([
 				'name' => $value
@@ -101,40 +133,21 @@ class Enum extends BaseController
 	}
 
 
-	public function changeIsShow()
+	private static function create($id = 0, $type = '', $value = '')
 	{
-		$id = inputPost('id', 0, 1);
-		$isShow = inputPost('isShow', 0, 1);
-
-		$query = EnumType::update([
-			'is_show' => $isShow
-		], ['id' => $id]);
-
-		if ($query['is_show']) return packApiData(200, 'success');
-		else return packApiData(500, 'Database error', [$query], '修改枚举父类型的显示状态失败');
-	}
-
-
-	public function addType()
-	{
-		$name = inputPost('name', 0, 1);
-
-		$query = EnumType::create(['name' => $name]);
-
-		if ($query->id > 0) return packApiData(200, 'success');
-		else return packApiData(500, 'Database error', $query, '新增枚举类型失败');
-	}
-
-
-	public function addEnum()
-	{
-		$typeId = inputPost('typeId', 0, 1);
-		$value = inputPost('value', 0, 1);
-
-		$query = EnumList::create([
-			'type_id' => $typeId,
-			'value' => $value
-		]);
+		if ($type === 'type') {
+			$query = EnumType::create([
+				'name' => $value,
+				'pid' => $id
+			]);
+		} elseif ($type === 'value') {
+			$query = EnumList::create([
+				'type_id' => $id,
+				'value' => $value
+			]);
+		} else {
+			return packApiData(4001, 'Invaild create type', [], '新增操作类型无效');
+		}
 
 		if ($query->id > 0) return packApiData(200, 'success');
 		else return packApiData(500, 'Database error', $query, '新增枚举值失败');
