@@ -11,212 +11,212 @@
 <html>
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="author" content="生蚝科技">
-    <title>健康日记平台</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{$staticPath}/css/datetimepicker.min.css">
-    <link rel="stylesheet" href="{$staticPath}/css/index.css">
-    <link rel="stylesheet" href="https://static.xshgzs.com/css/loading.css">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="author" content="生蚝科技">
+	<title>健康日记平台</title>
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="{$staticPath}/css/datetimepicker.min.css">
+	<link rel="stylesheet" href="{$staticPath}/css/index.css">
+	<link rel="stylesheet" href="https://static.xshgzs.com/css/loading.css">
 
-    <style>
-        .haveact {
-            color: #d800ff;
-            background-color: #fff491;
-            font-weight: bold;
-            font-size: 16px;
-        }
+	<style>
+		.haveact {
+			color: #d800ff;
+			background-color: #fff491;
+			font-weight: bold;
+			font-size: 16px;
+		}
 
-        .today {
-            background-color: #ddffab;
-        }
-    </style>
+		.today {
+			background-color: #ddffab;
+		}
+	</style>
 </head>
 
 <body>
-    <script>
-        var TOKEN = "{$token}";
-    </script>
+	<script>
+		var TOKEN = "{$token}";
+	</script>
 
-    <div id="app">
-        <!--头部-->
-        <div class="header">
-            <a class="btn btn-warning" href="{:url('index/logout')}">登出</a>
-            小生蚝 {{nowYear}}-{{nowMonth}}
-            <a class="btn btn-success" @click="goact">记录</a>
-            <a class="btn btn-primary" href="{:url('/console/index')}">后台</a>
-        </div>
+	<div id="app">
+		<!--头部-->
+		<div class="header">
+			<a class="btn btn-warning" href="{:url('index/logout')}">登出</a>
+			小生蚝 {{nowYear}}-{{nowMonth}}
+			<a class="btn btn-success" @click="goact">记录</a>
+			<a class="btn btn-primary" href="{:url('/console/index')}">后台</a>
+		</div>
 
-        <!--主体-->
-        <div class="main clearfix">
-            <div class="main-left">
-                <div class="border-container">
-                    <div class="name-title">
-                        本月次数统计
-                    </div>
-                    <div id="monthCountLineChart"></div>
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-                <div class="border-container">
-                    <div class="name-title">
-                        本月场所统计
-                    </div>
+		<!--主体-->
+		<div class="main clearfix">
+			<div class="main-left">
+				<div class="border-container">
+					<div class="name-title">
+						本月次数统计
+					</div>
+					<div id="monthCountLineChart"></div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+				<div class="border-container">
+					<div class="name-title">
+						本月场所统计
+					</div>
 
-                    <pie-chart ref="pieChart_monthPlace" id="monthPlace" name="场所" height='275px'></pie-chart>
+					<pie-chart ref="pieChart_monthPlace" id="monthPlace" name="场所" height='275px'></pie-chart>
 
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-                <div class="border-container">
-                    <div class="name-title">
-                        Shot Statistics
-                    </div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+				<div class="border-container">
+					<div class="name-title">
+						Shot Statistics
+					</div>
 
-                    <pie-chart ref="pieChart_shot" id="shot" name="shot" height='275px'></pie-chart>
+					<pie-chart ref="pieChart_shot" id="shot" name="shot" height='275px'></pie-chart>
 
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-            </div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+			</div>
 
-            <div class="main-middle">
-                <div class="border-container" style="width:32%;display:inline-block;margin-right:1%;">
-                    <div class="name-title">
-                        月次
-                    </div>
-                    <div class="countNumber" id="countLabel_month">
-                        <span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
-                        <span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
-                    </div>
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-                <div class="border-container" style="width:32%;display:inline-block;margin-right:1%;">
-                    <div class="name-title">
-                        周次
-                    </div>
-                    <div class="countNumber" id="countLabel_week">
-                        <span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
-                        <span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
-                    </div>
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-                <div class="border-container" style="width:32%;display:inline-block;">
-                    <div class="name-title">
-                        最长间隔
-                    </div>
-                    <div class="countNumber" id="countLabel_longestInterval">
-                        <span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
-                        <span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
-                    </div>
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-                <div class="border-container">
-                    <div id="calendarApp" style="text-align: center;margin: auto;">
-                        <!-- 日历头 -->
-                        <div class="calendarTitle">
-                            <div class="calendarMovingItem"><a @click="setDateOffset(-1,0)">&lt;&lt; 年</a></div>
-                            <div class="calendarMovingItem"><a @click="setDateOffset(0,-1)">&lt; 月</a></div>
-                            <div class="calendarDateTitle">{{nowYear}}-{{nowMonth}}</div>
-                            <div class="calendarMovingItem"><a @click="setDateOffset(0,1)">月 &gt;</a></div>
-                            <div class="calendarMovingItem"><a @click="setDateOffset(1,0)">年 &gt;&gt;</a></div>
-                        </div>
-                        <div class="calendarTitle">
-                            <div class="calendarItem">日</div>
-                            <div class="calendarItem">一</div>
-                            <div class="calendarItem">二</div>
-                            <div class="calendarItem">三</div>
-                            <div class="calendarItem">四</div>
-                            <div class="calendarItem">五</div>
-                            <div class="calendarItem">六</div>
-                        </div>
-                        <!-- 日历表格 -->
-                        <div class="calendarMain">
-                            <div class="calendarItem" v-for="item in calendarArray">
-                                <div style="width: 100%"
-                                     :class="(hadXieDays.indexOf(item)>=0)?'haveact':((item==nowDay && nowYear==nowDate.getFullYear() && nowMonth==nowDate.getMonth()+1) ? 'today' : '')"
-                                     @click="showList(nowYear,nowMonth,item)">{{item}}</div>
-                            </div>
-                        </div>
-                    </div>
+			<div class="main-middle">
+				<div class="border-container" style="width:32%;display:inline-block;margin-right:1%;">
+					<div class="name-title">
+						月次
+					</div>
+					<div class="countNumber" id="countLabel_month">
+						<span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
+						<span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
+					</div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+				<div class="border-container" style="width:32%;display:inline-block;margin-right:1%;">
+					<div class="name-title">
+						周次
+					</div>
+					<div class="countNumber" id="countLabel_week">
+						<span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
+						<span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
+					</div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+				<div class="border-container" style="width:32%;display:inline-block;">
+					<div class="name-title">
+						最长间隔
+					</div>
+					<div class="countNumber" id="countLabel_longestInterval">
+						<span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
+						<span><i class="fa fa-spin fa-circle-o-notch" style="font-size:28px;"></i></span>
+					</div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+				<div class="border-container">
+					<div id="calendarApp" style="text-align: center;margin: auto;">
+						<!-- 日历头 -->
+						<div class="calendarTitle">
+							<div class="calendarMovingItem"><a @click="setDateOffset(-1,0)">&lt;&lt; 年</a></div>
+							<div class="calendarMovingItem"><a @click="setDateOffset(0,-1)">&lt; 月</a></div>
+							<div class="calendarDateTitle">{{nowYear}}-{{nowMonth}}</div>
+							<div class="calendarMovingItem"><a @click="setDateOffset(0,1)">月 &gt;</a></div>
+							<div class="calendarMovingItem"><a @click="setDateOffset(1,0)">年 &gt;&gt;</a></div>
+						</div>
+						<div class="calendarTitle">
+							<div class="calendarItem">日</div>
+							<div class="calendarItem">一</div>
+							<div class="calendarItem">二</div>
+							<div class="calendarItem">三</div>
+							<div class="calendarItem">四</div>
+							<div class="calendarItem">五</div>
+							<div class="calendarItem">六</div>
+						</div>
+						<!-- 日历表格 -->
+						<div class="calendarMain">
+							<div class="calendarItem" v-for="item in calendarArray">
+								<div style="width: 100%"
+									 :class="(hadXieDays.indexOf(item)>=0)?'haveact':((item==nowDay && nowYear==nowDate.getFullYear() && nowMonth==nowDate.getMonth()+1) ? 'today' : '')"
+									 @click="showList(nowYear,nowMonth,item)">{{item}}</div>
+							</div>
+						</div>
+					</div>
 
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-            </div>
-            <div class="main-right">
-                <div class="border-container">
-                    <div class="name-title">
-                        本月最晚记录
-                    </div>
-                    <table class="table latestXieTable">
-                        <thead>
-                            <tr>
-                                <th>日期</th>
-                                <th>时间</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="latestInfo in latestList">
-                                <td>{{nowMonth}}-{{latestInfo['day']}}</td>
-                                <td>{{latestInfo['time']}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+			</div>
+			<div class="main-right">
+				<div class="border-container">
+					<div class="name-title">
+						本月最晚记录
+					</div>
+					<table class="table latestXieTable">
+						<thead>
+							<tr>
+								<th>日期</th>
+								<th>时间</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="latestInfo in latestList">
+								<td>{{nowMonth}}-{{latestInfo['day']}}</td>
+								<td>{{latestInfo['time']}}</td>
+							</tr>
+						</tbody>
+					</table>
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
 
-                <div class="border-container">
-                    <div class="name-title">
-                        本月工具统计
-                    </div>
+				<div class="border-container">
+					<div class="name-title">
+						本月工具统计
+					</div>
 
-                    <pie-chart ref="pieChart_monthToy" id="monthToy" name="工具" height='275px'></pie-chart>
+					<pie-chart ref="pieChart_monthToy" id="monthToy" name="工具" height='275px'></pie-chart>
 
-                    <span class="top-left border-span"></span>
-                    <span class="top-right border-span"></span>
-                    <span class="bottom-left border-span"></span>
-                    <span class="bottom-right border-span"></span>
-                </div>
-            </div>
-        </div>
-        {include file="/modal" /}
+					<span class="top-left border-span"></span>
+					<span class="top-right border-span"></span>
+					<span class="bottom-left border-span"></span>
+					<span class="bottom-right border-span"></span>
+				</div>
+			</div>
+		</div>
+		{include file="/modal" /}
 
-        <choose-item-modal ref='refff'
-                           :title="chooseItemModalName"
-                           :item-list='nowEnumList'
-                           :prop-checked-list="nowCheckedEnumList"
-                           :checked-node.sync="nowCheckedEnumList"
-                           :multiple="chooseItemMultiple"
-                           save-method-name="saveCheckedEnum">
-        </choose-item-modal>
-    </div>
+		<choose-item-modal ref='refff'
+						   :title="chooseItemModalName"
+						   :item-list='nowEnumList'
+						   :prop-checked-list="nowCheckedEnumList"
+						   :checked-node.sync="nowCheckedEnumList"
+						   :multiple="chooseItemMultiple"
+						   save-method-name="saveCheckedEnum">
+		</choose-item-modal>
+	</div>
 
-    <!-- Vue组件 -->
-    {include file="common@component" /}
-    <!-- /.Vue组件 -->
+	<!-- Vue组件 -->
+	{include file="common@component" /}
+	<!-- /.Vue组件 -->
 </body>
 
 <script src="{$staticPath}/js/config.js"></script>
@@ -229,43 +229,43 @@
 <script src="{$staticPath}/js/indexVue.js"></script>
 
 <script>
-    window.onload = function () {
-        // datetimePicker中文支持
-        ;
-        (function ($) {
-            $.fn.datetimepicker.dates['zh-CN'] = {
-                days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
-                daysShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-                daysMin: ["日", "一", "二", "三", "四", "五", "六", "日"],
-                months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                monthsShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                today: "今天",
-                suffix: [],
-                meridiem: ["上午", "下午"]
-            };
-        }(jQuery));
+	window.onload = function () {
+		// datetimePicker中文支持
+		;
+		(function ($) {
+			$.fn.datetimepicker.dates['zh-CN'] = {
+				days: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"],
+				daysShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+				daysMin: ["日", "一", "二", "三", "四", "五", "六", "日"],
+				months: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+				monthsShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+				today: "今天",
+				suffix: [],
+				meridiem: ["上午", "下午"]
+			};
+		}(jQuery));
 
-        $('#addTime_picker').datetimepicker({
-            format: "yyyy-mm-dd hh:ii",
-            language: "zh-CN",
-            weekStart: 0,
-            todayBtn: 1,
-            autoclose: 1,
-            todayHighlight: true,
-            startView: 2,
-            forceParse: 0,
-            showMeridian: 1,
-            initialDate: new Date(),
-            startDate: "2020-01-01 00:00",
-            endDate: "<?= date('Y-m-d H:i', strtotime('+7 days')); ?>"
-        });
+		$('#addTime_picker').datetimepicker({
+			format: "yyyy-mm-dd hh:ii",
+			language: "zh-CN",
+			weekStart: 0,
+			todayBtn: 1,
+			autoclose: 1,
+			todayHighlight: true,
+			startView: 2,
+			forceParse: 0,
+			showMeridian: 1,
+			initialDate: new Date(),
+			startDate: "2020-01-01 00:00",
+			endDate: "<?= date('Y-m-d H:i', strtotime('+7 days')); ?>"
+		});
 
-        $(".datetimepicker-minutes table tfoot tr:gt(0)").remove();
-        $(".datetimepicker-hours table tfoot tr:gt(0)").remove();
-        $(".datetimepicker-days table tfoot tr:gt(0)").remove();
-        $(".datetimepicker-months table tfoot tr:gt(0)").remove();
-        $(".datetimepicker-years table tfoot tr:gt(0)").remove();
-    };
+		$(".datetimepicker-minutes table tfoot tr:gt(0)").remove();
+		$(".datetimepicker-hours table tfoot tr:gt(0)").remove();
+		$(".datetimepicker-days table tfoot tr:gt(0)").remove();
+		$(".datetimepicker-months table tfoot tr:gt(0)").remove();
+		$(".datetimepicker-years table tfoot tr:gt(0)").remove();
+	};
 </script>
 
 </html>

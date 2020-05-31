@@ -3,7 +3,7 @@
  * @name 个人健康日记平台-V-主框架
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-10
- * @version 2020-05-26
+ * @version 2020-05-31
  */
 ?>
 <!DOCTYPE html>
@@ -44,15 +44,30 @@
 	<style>
 		th {
 			text-align: center;
-			vertical-align: middle;
+			vertical-align: middle !important;
+		}
+
+		tbody tr:hover {
+			color: #8a6d3b !important;
+			background-color: #fcf8e3 !important;
+			border-color: #faebcc !important;
+		}
+
+		.main-header .sidebar-toggle:before {
+			content: "";
 		}
 
 		.modal {
 			overflow-y: auto;
 		}
 
-		.main-header .sidebar-toggle:before {
-			content: "";
+		.div_table {
+			overflow: auto;
+			display: block;
+		}
+
+		.div_table table {
+			min-width: 100%;
 		}
 	</style>
 
@@ -66,7 +81,11 @@
 		{include file='/navbar' /}
 
 		<!-- 页面内容 -->
-		<div class="content-wrapper">
+		<div class="content-wrapper" style="background-color: #e9ebed;">
+			<!-- Vue组件 -->
+			{include file="common@component" /}
+			<!-- /.Vue组件 -->
+
 			<section class="content">
 				<div id="app">
 					{block name="vueBody"} {/block}

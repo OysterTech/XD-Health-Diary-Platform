@@ -234,3 +234,77 @@
 	};
 </script>
 <!-- /.echarts饼图 -->
+
+
+<!-- 数据表头筛选组 -->
+<!-- @Oyster Cheung(20200531-20200531) -->
+<style>
+	.table-filter-group div {
+		padding-left: 100px;
+	}
+
+	.table-filter-group label {
+		width: 100px;
+		position: absolute;
+		top: 7px;
+		left: 0;
+		text-align: right;
+	}
+
+	.table-filter-group input {
+		padding: 3px 10px;
+		border-color: #ccd7ef;
+		border-radius: 4px;
+	}
+</style>
+
+<template id="table-filter-template">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div v-for="(row,rowIndex) in form">
+				<div class="row">
+					<div v-for="(cell,cellIndex) in row"
+						 :class='["col-md-"] + (12/(Object.getOwnPropertyNames(row).length-1))'>
+						<div class="form-group table-filter-group">
+							<label>{{cell.name}}：</label>
+							<div>
+								<input class="form-control" v-model="formData[cellIndex]" autocomplete="off"
+									   :placeholder="cell.name">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<button @click="search" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i> 搜索</button>
+			<button @click="reset" class="btn btn-info"><i class="glyphicon glyphicon-refresh"></i> 重置</button>
+		</div>
+	</div>
+</template>
+
+<script>
+	var tableFilterVue = {
+		template: '#table-filter-template',
+		props: [
+			'form',
+			'filterData',
+			'submitEventName',
+		],
+		data: function () {
+			return {
+				formData: [],
+				eventName: this.submitEventName,
+			}
+		},
+		methods: {
+			search: function () {
+				this.$emit('update:filter-data', this.formData);
+				this.$parent[this.eventName]();
+			},
+			reset: function () {
+				this.formData = [];
+			}
+		}
+	};
+</script>
+<!-- /.数据表头筛选组 -->

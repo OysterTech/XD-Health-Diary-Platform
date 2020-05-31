@@ -34,7 +34,7 @@
 							<!-- Menu Footer-->
 							<li class="user-footer">
 								<div class="pull-left">
-									<a @click="addTab('__userProfile','{:url('/index/user/profile')}','用户资料')"
+									<a @click="addTab('__userProfile','/console//index/user/profile','用户资料')"
 									   class="btn btn-default btn-flat">用户中心</a>
 								</div>
 								<div class="pull-right">
@@ -67,11 +67,11 @@
 				</li>
 
 				<li>
-					<a href="{:url('enum/index')}"><i class="fas fa-book"></i> 枚举管理</a>
+					<a href="/console/enum/index"><i class="fas fa-book"></i> 枚举管理</a>
 				</li>
 
 				<li>
-					<a href="{:url('dashborad/index')}"><i class="fas fa-chalkboard-teacher"></i> 首页看板设置</a>
+					<a href="/console/dashborad/index"><i class="fas fa-chalkboard-teacher"></i> 首页看板设置</a>
 				</li>
 
 				<li class="treeview">
@@ -81,7 +81,7 @@
 					</a>
 					<ul class="treeview-menu">
 						<li>
-							<a href="{:url('link/index')}"><i class="fas fa-link"></i> 外链跳转管理</a>
+							<a href="/console/link/index"><i class="fas fa-link"></i> 外链跳转管理</a>
 						</li>
 
 						<li class="treeview">
@@ -91,10 +91,10 @@
 							</a>
 							<ul class="treeview-menu">
 								<li>
-									<a href="{:url('log.File/toList')}"><i class="fas fa-file-alt"></i> 附件查看日志</a>
+									<a href="/console/log/file/index"><i class="fas fa-file-alt"></i> 附件查看日志</a>
 								</li>
 								<li>
-									<a href="{:url('log.Api/toList')}"><i class="fas fa-network-wired"></i> 接口请求日志</a>
+									<a href="/console/log/api/index"><i class="fas fa-network-wired"></i> 接口请求日志</a>
 								</li>
 							</ul>
 						</li>
