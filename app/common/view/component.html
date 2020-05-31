@@ -261,16 +261,14 @@
 <template id="table-filter-template">
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<div v-for="(row,rowIndex) in form">
-				<div class="row">
-					<div v-for="(cell,cellIndex) in row"
-						 :class='["col-md-"] + (12/(Object.getOwnPropertyNames(row).length-1))'>
-						<div class="form-group table-filter-group">
-							<label>{{cell.name}}：</label>
-							<div>
-								<input class="form-control" v-model="formData[cellIndex]" autocomplete="off"
-									   :placeholder="cell.name">
-							</div>
+			<div class="row" v-for="(row,rowIndex) in form">
+				<div v-for="(cell,cellIndex) in row"
+					 :class='["col-md-"] + (12/(Object.getOwnPropertyNames(row).length-1))'>
+					<div class="form-group table-filter-group">
+						<label>{{cell.name}}：</label>
+						<div>
+							<input class="form-control" v-model="formData[cellIndex]" autocomplete="off"
+								   :placeholder="cell.name">
 						</div>
 					</div>
 				</div>
@@ -292,19 +290,104 @@
 		],
 		data: function () {
 			return {
-				formData: [],
+				formData: {},
 				eventName: this.submitEventName,
 			}
 		},
 		methods: {
 			search: function () {
+				for (i in this.formData) {
+					if (this.formData[i] == "") delete this.formData[i];
+				}
+
 				this.$emit('update:filter-data', this.formData);
 				this.$parent[this.eventName]();
 			},
 			reset: function () {
-				this.formData = [];
+				this.formData = {};
 			}
 		}
 	};
 </script>
 <!-- /.数据表头筛选组 -->
+
+
+<!-- 表格分页条 -->
+<!-- @Oyster Cheung(20200531-20200531) -->
+<template id="pagination-template">
+	<div>
+		<p style="float: left;">
+			当前显示{{(nowPage-1)*perPage+1}}~{{(nowPage*perPage>=total) ? total : nowPage*perPage}}条，共{{total}}条数据
+		</p>
+
+		<p style="float: right;">
+			第<input v-model="inputNowPage" @keyup.enter="changePage(parseInt(inputNowPage))"
+				   style="width: 50px;" data-toggle="tooltip" data-placement="right"
+				   title="按回车即可跳转">页，共{{totalPage}}页
+		</p>
+
+		<center>
+			<ul class="pagination">
+				<li :class="{hidden:(nowPage<=1)}">
+					<a @click="changePage(1)"><span aria-hidden="true">«</span></a>
+				</li>
+				<li :class="{hidden:(nowPage<=1)}">
+					<a @click="changePage(nowPage-1)"><span aria-hidden="true">&lt;</span></a>
+				</li>
+
+				<li v-if="nowPage-2>=1"><a @click="changePage(nowPage-2)">{{nowPage-2}}</a></li>
+				<li v-if="nowPage-1>=1"><a @click="changePage(nowPage-1)">{{nowPage-1}}</a></li>
+
+				<li class="active"><a>{{nowPage}}</a></li>
+
+				<li v-if="nowPage+1<=totalPage"><a @click="changePage(nowPage+1)">{{nowPage+1}}</a></li>
+				<li v-if="nowPage+2<=totalPage"><a @click="changePage(nowPage+2)">{{nowPage+2}}</a></li>
+
+				<li :class="{hidden:(nowPage==totalPage)}">
+					<a @click="changePage(nowPage+1)"><span aria-hidden="true">&gt;</span></a>
+				</li>
+				<li :class="{hidden:(nowPage==totalPage)}">
+					<a @click="changePage(totalPage)"><span aria-hidden="true">»</span></a>
+				</li>
+			</ul>
+		</center>
+	</div>
+</template>
+
+<script>
+	$(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	})
+
+	var paginationVue = {
+		template: '#pagination-template',
+		props: [
+			'now',
+			'total',
+			'perPage',
+			'getdataEventName',
+		],
+		data: function () {
+			return {
+				nowPage: this.now,
+				inputNowPage: this.now,
+				totalData: 0,
+				totalPage: 0,
+			}
+		},
+		methods: {
+			changePage: function (page) {
+				if (page > this.totalPage) {
+					alert("页码超过最大页数，当前数据共" + this.totalPage + "页");
+					return;
+				}
+
+				this.nowPage = page;
+				this.inputNowPage = page;
+				this.$emit('update:now', page);
+				this.$parent[this.getdataEventName]();
+			}
+		}
+	};
+</script>
+<!-- /.表格分页条 -->
