@@ -154,7 +154,7 @@ function gotourl($path = '')
  * @return string             参数内容
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2019-11-17
- * @version 2019-12-23
+ * @version 2020-05-30
  */
 function inputGet($dataName = '', $allowNull = 0, $isAjax = 0, $errorCode = 0, $errorMsg = 'Lack parameter', $errorTips = '')
 {
@@ -167,7 +167,7 @@ function inputGet($dataName = '', $allowNull = 0, $isAjax = 0, $errorCode = 0, $
 			return $_GET[$dataName];
 		}
 	} elseif ($allowNull == 1) {
-		return;
+		return null;
 	} else {
 		return $isAjax == 1 ? packApiData($errorCode, $errorMsg, [], $errorTips, false, true) : die();
 	}
