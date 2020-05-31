@@ -1,0 +1,316 @@
+<?php
+/**
+ * @name 个人健康日记平台-V-后台-接口日志
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-05-30
+ * @version 2020-05-31
+ */
+?>
+{extend name="/framework" /}
+
+{block name='pageCss'}
+<style>
+	@media (min-width: 768px) {
+		.infoModalBody {
+			width: 800px;
+		}
+	}
+</style>
+{/block}
+
+{block name='vueBody'}
+<table-filter ref="filterRef"
+			  :form="filterForm"
+			  :filter-data.sync="filterData"
+			  submit-event-name="getFilterData">
+</table-filter>
+
+<div class="operateBtnGroup">
+	<button class="btn btn-danger">清空日志</button>
+</div>
+
+<div class="div_table">
+	<table id="table" class="table table-striped table-bordered table-hover"
+		   style="border-radius: 5px; border-collapse: separate;">
+		<thead style="background-color: #fff;">
+			<tr>
+				<th>ID</th>
+				<th>地址</th>
+				<th>响应码</th>
+				<th>时间</th>
+				<th>IP</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr v-for="info in list" @click="showInfo(info['request_id'])">
+				<td>{{info['request_id']}}</td>
+				<td>{{info['path']}}</td>
+				<td>{{info['code']}}</td>
+				<td>{{info['create_time']}}</td>
+				<td>{{info['ip']}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<pagination ref="pageNav" :now.sync="nowPage" :total="total" :per-page="perPage" getdata-event-name="getList">
+</pagination>
+
+<div class="modal fade" id="infoModal">
+	<div class="modal-dialog infoModalBody">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title">[{{detail['request_id']}}]的日志详情</h3>
+			</div>
+			<div class="modal-body">
+				<table class="table table-striped table-bordered table-hover"
+					   style="border-radius: 5px; border-collapse: separate;">
+					<tr>
+						<th>#</th>
+						<td>{{detail['id']}}</td>
+					</tr>
+					<tr>
+						<th>请求ID</th>
+						<td>{{detail['request_id']}}</td>
+					</tr>
+					<tr>
+						<th>请求路径</th>
+						<td>{{detail['path']}}</td>
+					</tr>
+					<tr>
+						<th>响应码</th>
+						<td>{{detail['code']}}</td>
+					</tr>
+					<tr>
+						<th>提示内容</th>
+						<td>{{detail['message']}}</td>
+					</tr>
+					<tr>
+						<th>请求包内容</th>
+						<td>{{detail['req_data']}}</td>
+					</tr>
+					<tr>
+						<th>响应包内容</th>
+						<td><button @click="showResData(detail['request_id'])" class="btn btn-primary">查看响应包内容</button>
+						</td>
+					</tr>
+					<tr>
+						<th>IP</th>
+						<td>{{detail['ip']}}</td>
+					</tr>
+					<tr>
+						<th>请求源路径</th>
+						<td>{{detail['referer']}}</td>
+					</tr>
+					<tr>
+						<th>时间</th>
+						<td>{{detail['create_time']}}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">关闭 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="resDataModal">
+	<div class="modal-dialog infoModalBody">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title">[{{detail['request_id']}}]的日志详情</h3>
+			</div>
+			<div class="modal-body">
+				{{resData}}
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">关闭 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name='vueScript'}
+<script>
+	var vm = new Vue({
+		el: '#app',
+		components: {
+			'table-filter': tableFilterVue,
+			'pagination': paginationVue,
+		},
+		data: {
+			token: "{$token}",
+			total: 0,
+			nowPage: 1,
+			perPage: 25,
+			list: [],
+			detail: [],
+			resData: [],
+			filterForm: [
+				{
+					request_id: {
+						type: "input",
+						name: "请求ID"
+					},
+					idLast5: {
+						type: "input",
+						name: "请求ID后5位"
+					},
+					path: {
+						type: "input",
+						name: "请求路径"
+					},
+				},
+				{
+					code: {
+						type: "input",
+						name: "响应码"
+					},
+					create_time: {
+						type: "input",
+						name: "请求时间"
+					},
+					ip: {
+						type: "input",
+						name: "IP"
+					}
+				}
+			],
+			filterData: {},
+		},
+		methods: {
+			getFilterData: function () {
+				this.getList();
+			},
+			getList: function () {
+				let that = this;
+
+				if ((this.nowPage - 1) * this.perPage > this.totalPage) {
+					showModalTips("当前页码大于数据总条数，请返回上一页！");
+					return;
+				}
+
+				if (that.filterData.id !== undefined && that.filterData.idLast5 !== undefined) {
+					showModalTips("“ID”及“ID后5位”只能填写其中一项");
+					return;
+				}
+
+				lockScreen();
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "log/api/list",
+					dataType: "json",
+					type: "post",
+					data: {
+						filterData: that.filterData,
+						token: that.token,
+						page: that.nowPage,
+						perPage: that.perPage,
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							that.list = ret.data.list;
+							that.total = ret.data.total;
+
+							that.$refs.pageNav.totalData = that.total;
+							that.$refs.pageNav.totalPage = Math.ceil(that.total / that.perPage);
+							return;
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				})
+			},
+			showInfo: function (id) {
+				let that = this;
+
+				lockScreen();
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "log/api/detail",
+					dataType: "json",
+					data: {
+						token: that.token,
+						reqId: id,
+						type: "detail"
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							that.detail = ret.data.detail;
+							$("#infoModal").modal("show");
+							return;
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						}
+					}
+				})
+			},
+			showResData: function (id) {
+				let that = this;
+
+				lockScreen();
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "log/api/detail",
+					dataType: "json",
+					data: {
+						token: that.token,
+						reqId: id,
+						type: "resData"
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
+						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
+						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							that.resData = ret.data.detail.res_data;
+							$("#resDataModal").modal("show");
+							return;
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						}
+					}
+				})
+			}
+		},
+		mounted() {
+			this.getList();
+		},
+	});
+</script>
+{/block}
