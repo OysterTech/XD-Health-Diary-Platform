@@ -45,7 +45,8 @@
 												   autocomplete="off">
 										</div>
 										<div class="wrap_input">
-											<input v-model="userPin" type="password" placeholder="请输入PIN"
+											<input v-model="userPin" @keyup.enter="toLogin" type="password"
+												   placeholder="请输入PIN"
 												   class="is-success"
 												   autocomplete="off">
 										</div>

@@ -25,7 +25,7 @@ class Index extends BaseController
 
 	public function main()
 	{
-		if (!Session::has('userInfo')) {
+		if (!Session::has('userName')) {
 			return redirect('/index/logout');
 		}
 
@@ -66,7 +66,7 @@ class Index extends BaseController
 
 				return packApiData(4031, 'need two factor auth', ['ticket' => $ticket], '请输入二步验证TOKEN', false);
 			} else {
-				$this->setLoginState($userInfo);
+				$this->setLoginState($userInfo['userName'], $userInfo['nickName']);
 				return packApiData(200, 'success', ['url' => '/index/main'], '', false);
 			}
 		} else {
@@ -91,7 +91,7 @@ class Index extends BaseController
 		$checkResult = $ga->verifyCode($tokenKey, $token);
 
 		if ($checkResult) {
-			$this->setLoginState($userInfo);
+			$this->setLoginState($userInfo['userName'], $userInfo['nickName']);
 
 			return packApiData(200, 'success', ['url' => '/index/main'], '', false);
 		} else {
@@ -100,11 +100,12 @@ class Index extends BaseController
 	}
 
 
-	private function setLoginState($userInfo = '')
+	private function setLoginState($userName = '', $nickName = '')
 	{
 		Session::delete('loginTicket');
 		Session::delete('loginUserInfo');
-		Session::set('userInfo', $userInfo);
+		Session::set('userName', $userName);
+		Session::set('nickName', $nickName);
 
 		return true;
 	}
