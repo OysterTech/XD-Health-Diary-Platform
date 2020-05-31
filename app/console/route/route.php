@@ -16,6 +16,7 @@ Route::group('log/api', function () {
 	Route::rule('index', 'log.Api/index');
 	Route::rule('list', 'log.Api/getList');
 	Route::rule('detail', 'log.Api/getDetail');
+	Route::post('truncate', 'log.Api/toTruncate');
 });
 
 Route::group('log/file', function () {

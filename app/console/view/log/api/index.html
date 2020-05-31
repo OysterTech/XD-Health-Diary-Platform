@@ -26,7 +26,7 @@
 </table-filter>
 
 <div class="operateBtnGroup">
-	<button class="btn btn-danger">清空日志</button>
+	<button class="btn btn-danger" data-toggle="modal" data-target="#truncateModal">清空日志</button>
 </div>
 
 <div class="div_table">
@@ -54,7 +54,11 @@
 	</table>
 </div>
 
-<pagination ref="pageNav" :now.sync="nowPage" :total="total" :per-page="perPage" getdata-event-name="getList">
+<pagination ref="pageNav"
+			:now.sync="nowPage"
+			:total="total"
+			:per-page="perPage"
+			getdata-event-name="getList">
 </pagination>
 
 <div class="modal fade" id="infoModal">
@@ -135,6 +139,28 @@
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="truncateModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
+						  class="sr-only">Close</span></button>
+				<h3 class="modal-title">请输入密码以清空接口日志</h3>
+			</div>
+			<div class="modal-body">
+				<div class="input-group">
+					<div class="input-group-addon">用户密码</div>
+					<input v-model="truncatePassword" type="password" class="form-control">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
+				<button class="btn btn-danger" @click="toTruncate">确认 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
 {/block}
 
 {block name='vueScript'}
@@ -153,6 +179,7 @@
 			list: [],
 			detail: [],
 			resData: [],
+			truncatePassword: "",
 			filterForm: [
 				{
 					request_id: {
@@ -253,9 +280,7 @@
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						unlockScreen();
@@ -267,7 +292,7 @@
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
 				})
@@ -288,9 +313,7 @@
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						unlockScreen();
@@ -302,7 +325,40 @@
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				})
+			},
+			toTruncate: function () {
+				let that = this;
+
+				lockScreen();
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "log/api/truncate",
+					dataType: "json",
+					type: "post",
+					data: {
+						token: that.token,
+						password: that.truncatePassword
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							alert("清空成功！");
+							window.location.reload();
+							return;
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
 				})

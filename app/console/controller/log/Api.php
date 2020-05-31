@@ -22,6 +22,8 @@ class Api extends BaseController
 
 	public function getList()
 	{
+		checkToken(inputPost('token', 0, 1));
+
 		$page = inputPost('page', 1, 1) ?: 1;
 		$perPage = inputPost('perPage', 1, 1) ?: 25;
 		$filterData = inputPost('filterData', 1, 1) ?: [];
@@ -50,6 +52,8 @@ class Api extends BaseController
 
 	public function getDetail()
 	{
+		checkToken(inputGet('token', 0, 1));
+
 		$id = inputGet('reqId', 0, 1);
 		$type = inputGet('type', 0, 1);
 
@@ -63,5 +67,24 @@ class Api extends BaseController
 
 		$query = $query->find();
 		return packApiData(200, 'success', ['detail' => $query], '', false);
+	}
+
+
+	public function toTruncate()
+	{
+		checkToken(inputPost('token', 0, 1));
+		
+		$pin = inputPost('password', 0, 1);
+
+		$userInfo = \think\facade\Config::get('app.user_info');
+		$userName = $userInfo['userName'];
+		$salt = $userInfo['salt'];
+
+		if (sha1($salt . md5($userName . $pin) . $pin) === $userInfo['pin']) {
+			\think\facade\Db::query('TRUNCATE api_request_log');
+			return packApiData(200, 'success');
+		} else {
+			return packApiData(403, 'Invalid password', [], '密码错误，请重新输入');
+		}
 	}
 }
