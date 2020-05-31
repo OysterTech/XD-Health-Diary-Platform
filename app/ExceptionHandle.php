@@ -59,8 +59,9 @@ class ExceptionHandle extends Handle
 
 		if ($statusCode === 404) return parent::render($request, $e);
 
+		$requestId=makeUUID();
 		ApiRequestLog::create([
-			'request_id' => makeUUID(),
+			'request_id' => $requestId,
 			'path' => Request::baseUrl(),
 			'referer' => $_SERVER['HTTP_REFERER'] ?? '.',
 			'ip' => getIP(),
@@ -74,6 +75,8 @@ class ExceptionHandle extends Handle
 				'session' => Session::all()
 			]),
 		]);
+
+		Session::set('errorRequestId', $requestId);
 
 		// 其他错误交给系统处理
 		return parent::render($request, $e);

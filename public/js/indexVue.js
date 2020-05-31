@@ -2,7 +2,7 @@
  * @name 个人健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
- * @version 2020-05-24
+ * @version 2020-05-31
  */
 
 var vm = new Vue({
@@ -69,9 +69,7 @@ var vm = new Vue({
 				error: function (e) {
 					unlockScreen();
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 				},
 				success: function (ret) {
 					if (ret.code == 200) {
@@ -83,7 +81,7 @@ var vm = new Vue({
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
-						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 
 					that.makePieChart('monthPlace', 1, false);
@@ -111,9 +109,7 @@ var vm = new Vue({
 				dataType: "json",
 				error: function (e) {
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 
 					unlockScreen();
 				},
@@ -124,7 +120,7 @@ var vm = new Vue({
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
-						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 
 					unlockScreen();
@@ -194,9 +190,7 @@ var vm = new Vue({
 				error: function (e) {
 					unlockScreen();
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 				},
 				success: function (ret) {
 					if (ret.code == 200 || ret.code == 404) {
@@ -210,9 +204,12 @@ var vm = new Vue({
 								total += ret.data.data[i]['value'] ? parseInt(ret.data.data[i]['value']) : 0;
 							}
 
-							unknownData.name = "未知";
-							unknownData['value'] = that.hadXieDays.length - total;
-							chartData.push(unknownData);
+							// 还有未知的数据
+							if (that.hadXieDays.length - total > 0) {
+								unknownData.name = "未知";
+								unknownData['value'] = that.hadXieDays.length - total;
+								chartData.push(unknownData);
+							}
 						}
 
 						that.$refs['pieChart_' + pieId].chartData = chartData;
@@ -220,7 +217,7 @@ var vm = new Vue({
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
-						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 
 					unlockScreen();
@@ -366,9 +363,7 @@ var vm = new Vue({
 				error: function (e) {
 					unlockScreen();
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 				},
 				success: function (ret) {
 					if (ret.code == 200) {
@@ -392,7 +387,7 @@ var vm = new Vue({
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
-						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 
 					unlockScreen();
@@ -454,7 +449,7 @@ var vm = new Vue({
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 
 						unlockScreen();
@@ -508,9 +503,7 @@ var vm = new Vue({
 				error: function (e) {
 					unlockScreen();
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 				},
 				success: function (ret) {
 					if (ret.code == 200 || ret.code == 404) {
@@ -525,7 +518,7 @@ var vm = new Vue({
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
-						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 
 					unlockScreen();
@@ -572,7 +565,7 @@ var vm = new Vue({
 						showModalTips(ret.tips);
 					} else {
 						console.log("toSee", ret);
-						showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 				}
 			})
@@ -634,9 +627,7 @@ var vm = new Vue({
 				error: function (e) {
 					unlockScreen();
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 				},
 				success: function (ret) {
 					unlockScreen();
@@ -647,7 +638,7 @@ var vm = new Vue({
 						that.getCount();
 						return true;
 					} else {
-						showModalTips("新增失败<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						$("#actModal").modal('hide');
 						return true;
 					}
@@ -671,9 +662,7 @@ var vm = new Vue({
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						unlockScreen();
@@ -684,7 +673,7 @@ var vm = new Vue({
 							that.getCount();
 							return true;
 						} else {
-							showModalTips("删除失败<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 							return true;
 						}
 					}
@@ -722,9 +711,7 @@ var vm = new Vue({
 				error: function (e) {
 					unlockScreen();
 					console.log(e);
-					errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-					errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-					showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+					showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 				},
 				success: function (ret) {
 					unlockScreen();
@@ -737,7 +724,7 @@ var vm = new Vue({
 					} else if (ret.tips !== '') {
 						showModalTips(ret.tips);
 					} else {
-						showModalTips("上传失败<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+						showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 					}
 				}
 			})

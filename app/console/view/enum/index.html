@@ -65,7 +65,7 @@
 
 				<table class="table table-striped table-bordered table-hover"
 					   style="border-radius: 5px; border-collapse: separate;">
-					<thead>
+					<thead style="background-color: #fff;">
 						<tr>
 							<th>#</th>
 							<th>枚举值</th>
@@ -237,9 +237,7 @@
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						if (ret.code == 200) {
@@ -247,7 +245,7 @@
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
 				});
@@ -268,9 +266,7 @@
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						if (ret.code == 200) {
@@ -278,7 +274,7 @@
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
 				});
@@ -314,9 +310,7 @@
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						unlockScreen();
@@ -339,7 +333,7 @@
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
 				});
@@ -373,9 +367,7 @@
 					error: function (e) {
 						unlockScreen();
 						console.log(e);
-						errorTips = this.url.replace(window.CONFIG.apiPath, "") + "<br>";
-						errorTips += (e.responseJSON.message !== '') ? e.responseJSON.message : statusText;
-						showModalTips("服务器错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>" + errorTips);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
 						unlockScreen();
@@ -389,7 +381,7 @@
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
-							showModalTips("系统错误<br>请联系技术支持并提供以下信息<hr><p style='font-size:17px;color:black'>[" + ret.code + "] " + ret.tips);
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
 				})
