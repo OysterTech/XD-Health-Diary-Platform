@@ -4,13 +4,14 @@
  * @name 个人健康日记平台-C-首页
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-24
- * @version 2020-05-30
+ * @version 2020-05-31
  */
 
 namespace app\index\controller;
 
 use app\BaseController;
 use app\common\controller\GoogleAuth;
+use app\common\model\Link;
 use think\facade\Config;
 use think\facade\Session;
 
@@ -109,14 +110,28 @@ class Index extends BaseController
 	}
 
 
+	/**
+	 * redirect 跳转外链
+	 */
 	public function redirect()
 	{
-		$key = inputGet('key', 0);
+		$key = inputGet('key', 1);
 
-		if ($key === 'testkey') {
-			die(header('location: https://baidu.com'));
+		if (strlen($key) != 40) {
+			return view('common@/error', ['status' => 'error', 'errorTips' => '非法外链KEY<br>如有疑问，请联系技术支持']);
+		}
+
+		$query = Link::where('link_key', $key)
+			->find();
+
+		if ($query !== []) {
+			Link::where('link_key', $key)
+				->inc('count')
+				->update();
+
+			die(header('location: ' . $query['url']));
 		} else {
-			return view('common@/error', ['status' => 'error', 'errorTips' => '非法外链key<br>如有疑问，请联系技术支持']);
+			return view('common@/error', ['status' => 'error', 'errorTips' => '非法外链KEY<br>如有疑问，请联系技术支持']);
 		}
 	}
 }
