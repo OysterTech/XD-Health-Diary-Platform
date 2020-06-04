@@ -370,7 +370,7 @@ var vm = new Vue({
 						for (i in ret.data['data']) {
 							let info = ret.data['data'][i];
 
-							if (info['type']) {
+							if (info['id']) {
 								let extraParam = JSON.parse(info['extra_param']);
 
 								// 把扩展字段写入对象中
