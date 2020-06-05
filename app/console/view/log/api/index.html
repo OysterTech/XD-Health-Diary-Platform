@@ -3,7 +3,7 @@
  * @name 个人健康日记平台-V-后台-接口日志
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-30
- * @version 2020-05-31
+ * @version 2020-06-06
  */
 ?>
 {extend name="/framework" /}
@@ -224,8 +224,13 @@
 					return;
 				}
 
-				if (that.filterData.id !== undefined && that.filterData.idLast5 !== undefined) {
+				if (that.filterData.request_id !== undefined && that.filterData.idLast5 !== undefined) {
 					showModalTips("“ID”及“ID后5位”只能填写其中一项");
+					return;
+				}
+
+				if (that.filterData.idLast5.length !== 5) {
+					showModalTips("“ID后5位”必须为5个字符");
 					return;
 				}
 
