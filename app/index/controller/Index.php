@@ -4,7 +4,7 @@
  * @name 个人健康日记平台-C-首页
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-24
- * @version 2020-05-31
+ * @version 2020-06-06
  */
 
 namespace app\index\controller;
@@ -12,6 +12,7 @@ namespace app\index\controller;
 use app\BaseController;
 use app\common\controller\GoogleAuth;
 use app\common\model\Link;
+use app\common\model\Config as AppConf;
 use think\facade\Config;
 use think\facade\Session;
 
@@ -54,11 +55,12 @@ class Index extends BaseController
 		$userName = inputPost('userName', 0, 1);
 		$pin = inputPost('userPin', 0, 1);
 
-		$userInfo = Config::get('app.user_info');
+		$userInfo = AppConf::where('name', 'userInfo')->find();
+		$userInfo = json_decode($userInfo['value'], true);
 		$salt = $userInfo['salt'];
 
 		if (sha1($salt . md5($userName . $pin) . $pin) === $userInfo['pin']) {
-			if (Config::get('app.use_2fa_token') === true) {
+			if (AppConf::where('name', 'use2faToken')->find()['value'] === '1') {
 				$ticket = sha1(time() . $pin);
 
 				Session::set('loginTicket', $ticket);
@@ -91,7 +93,7 @@ class Index extends BaseController
 		$checkResult = $ga->verifyCode($tokenKey, $token);
 
 		if ($checkResult) {
-			$this->setLoginState($userInfo['userName'], $userInfo['nickName']);
+			$this->setLoginState($userInfo['name'], $userInfo['nickName']);
 
 			return packApiData(200, 'success', ['url' => '/index/main'], '', false);
 		} else {
