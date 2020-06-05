@@ -2,7 +2,7 @@
  * @name 个人健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
- * @version 2020-05-31
+ * @version 2020-06-06
  */
 
 var vm = new Vue({
@@ -758,8 +758,6 @@ var vm = new Vue({
 function getNowMonthWeekList(year, month) {
 	var oneDayLong = 24 * 60 * 60 * 1000;
 	var weekList = [];
-	var year = 2020;
-	var month = 4;
 
 	var first = new Date(year + '/' + month + '/01');
 	var firstTime = first.getTime();
