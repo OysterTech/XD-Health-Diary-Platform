@@ -4,25 +4,26 @@
  * @name 小丁健康日记平台-C-后台-接口日志
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-30
- * @version 2020-05-31
+ * @version 2020-06-06
  */
 
 namespace app\console\controller\log;
 
 use app\BaseController;
 use app\common\model\ApiRequestLog;
+use app\common\model\Config as AppConf;
 
 class Api extends BaseController
 {
 	public function index()
 	{
-		return view('/log/api/index', ['token' => createToken()]);
+		return view('/log/api/index', ['token' => createToken('console')]);
 	}
 
 
 	public function getList()
 	{
-		checkToken(inputPost('token', 0, 1));
+		checkToken(inputPost('token', 0, 1), 'console');
 
 		$page = inputPost('page', 1, 1) ?: 1;
 		$perPage = inputPost('perPage', 1, 1) ?: 25;
@@ -33,9 +34,11 @@ class Api extends BaseController
 
 		foreach ($filterData as $key => $value) {
 			if ($key === 'idLast5') {
+				// 根据ID最后5位查询，方便用户快查
 				$countQuery = $countQuery->whereRaw('RIGHT(request_id,5)=:id', ['id' => $value]);
 				$query = $query->whereRaw('RIGHT(request_id,5)=:id', ['id' => $value]);
 			} else {
+				// 其他条件
 				$countQuery = $countQuery->where($key, $value);
 				$query = $query->where($key, $value);
 			}
@@ -52,7 +55,7 @@ class Api extends BaseController
 
 	public function getDetail()
 	{
-		checkToken(inputGet('token', 0, 1));
+		checkToken(inputGet('token', 0, 1), 'console');
 
 		$id = inputGet('reqId', 0, 1);
 		$type = inputGet('type', 0, 1);
@@ -72,12 +75,14 @@ class Api extends BaseController
 
 	public function toTruncate()
 	{
-		checkToken(inputPost('token', 0, 1));
-		
+		checkToken(inputPost('token', 0, 1), 'console');
+
 		$pin = inputPost('password', 0, 1);
 
-		$userInfo = \think\facade\Config::get('app.user_info');
-		$userName = $userInfo['userName'];
+		// 先验证用户密码
+		$userInfo = AppConf::get('userInfo');
+		$userInfo = json_decode($userInfo, true);
+		$userName = $userInfo['name'];
 		$salt = $userInfo['salt'];
 
 		if (sha1($salt . md5($userName . $pin) . $pin) === $userInfo['pin']) {

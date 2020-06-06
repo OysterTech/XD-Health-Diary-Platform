@@ -6,14 +6,15 @@ use think\facade\Session;
 
 /**
  * checkToken 校验接口令牌
- * @param  string $token 令牌
+ * @param  string $token    令牌
+ * @param  string $platform 当前令牌所属平台
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-01
- * @version 2020-05-17
+ * @version 2020-06-06
  */
-function checkToken($token = '')
+function checkToken($token = '', $platform = 'front')
 {
-	if (Session::has('token') && Session::get('token') === $token) {
+	if (Session::has($platform . '_token') && Session::get($platform . '_token') === $token) {
 		return true;
 	} else {
 		packApiData(403001, 'Invalid token', [], '接口令牌无效', false, true);
@@ -23,15 +24,16 @@ function checkToken($token = '')
 
 /**
  * createToken 生成接口令牌
+ * @param  string $platform 生成的令牌所属平台
  * @return string 令牌
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-17
- * @version 2020-05-17
+ * @version 2020-06-06
  */
-function createToken()
+function createToken($platform = 'front')
 {
 	$token = sha1(time() . mt_rand());
-	Session::set('token', $token);
+	Session::set($platform . '_token', $token);
 	return $token;
 }
 

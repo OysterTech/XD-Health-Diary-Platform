@@ -4,7 +4,7 @@
  * @name 小丁健康日记平台-C-后台-枚举
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-09
- * @version 2020-05-30
+ * @version 2020-06-06
  */
 
 namespace app\console\controller;
@@ -17,13 +17,13 @@ class Enum extends BaseController
 {
 	public function index()
 	{
-		return view('/enum/index', ['token' => createToken()]);
+		return view('/enum/index', ['token' => createToken('console')]);
 	}
 
 
 	public function getTypeListForZtree()
 	{
-		checkToken(inputGet('token', 0, 1));
+		checkToken(inputGet('token', 0, 1), 'console');
 
 		$query = EnumType::where('is_delete', 0)
 			->select();
@@ -44,9 +44,24 @@ class Enum extends BaseController
 	}
 
 
+	public function getList()
+	{
+		checkToken(inputGet('token', 0, 1), 'console');
+
+		$type = inputGet('type', 0, 1);
+
+		$query = EnumList::where('type_id', $type)
+			->where('is_delete', 0)
+			->select();
+
+		if (count($query) >= 1) return packApiData(200, 'success', ['data' => $query]);
+		else return packApiData(404, 'Enum not found', $query, '查询枚举值失败');
+	}
+
+
 	public function delete()
 	{
-		checkToken(inputPost('token', 0, 1));
+		checkToken(inputPost('token', 0, 1), 'console');
 
 		$deleteInfo = inputPost('info', 0, 1);
 		$type = $deleteInfo['type'];
@@ -77,7 +92,7 @@ class Enum extends BaseController
 
 	public function changeIsShow()
 	{
-		checkToken(inputPost('token', 0, 1));
+		checkToken(inputPost('token', 0, 1), 'console');
 
 		$id = inputPost('id', 0, 1);
 		$isShow = inputPost('isShow', 0, 1);
@@ -93,7 +108,7 @@ class Enum extends BaseController
 
 	public function toCU()
 	{
-		checkToken(inputPost('token', 0, 1));
+		checkToken(inputPost('token', 0, 1), 'console');
 
 		$cuInfo = inputPost('cuInfo', 0, 1);
 		$cuType = $cuInfo['operateType'];
