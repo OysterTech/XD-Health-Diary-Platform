@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @name 个人健康日记平台-C-首页
+ * @name 小丁健康日记平台-C-首页
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-24
  * @version 2020-06-06

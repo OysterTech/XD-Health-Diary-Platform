@@ -3,7 +3,12 @@
 
 <head>
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta name="author" content="生蚝科技">
+	<meta name="created" content="2020-05-23">
+	<meta name="revised" content="2020-06-06">
+
 	<title>登录</title>
+
 	<link rel="stylesheet" href="{$staticPath}/css/login.css">
 	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -22,7 +27,7 @@
 						<div class="logo">
 						</div>
 						<div class="qrcode-wrap">
-							<p class="login-box-title">知音楼扫码</p>
+							<p class="login-box-title">扫码</p>
 							<div class="login-box-qrcode hide" id="scanCode">
 							</div>
 						</div>
@@ -41,11 +46,14 @@
 								<div class="account_form">
 									<div class="inputWrap">
 										<div class="wrap_input">
-											<input v-model="userName" placeholder="请输入用户名" class="is-focus"
+											<input v-model="userName"
+												   onkeydown="if(event.keyCode==13)$('#password').focus();"
+												   placeholder="请输入用户名" class="is-focus"
 												   autocomplete="off">
 										</div>
 										<div class="wrap_input">
-											<input v-model="userPin" @keyup.enter="toLogin" type="password"
+											<input id="password" v-model="userPin" @keyup.enter="toLogin"
+												   type="password"
 												   placeholder="请输入PIN"
 												   class="is-success"
 												   autocomplete="off">

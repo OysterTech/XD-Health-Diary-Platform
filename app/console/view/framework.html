@@ -1,17 +1,14 @@
-<?php
-/**
- * @name 个人健康日记平台-V-主框架
- * @author Oyster Cheung <master@xshgzs.com>
- * @since 2020-05-10
- * @version 2020-05-31
- */
-?>
 <!DOCTYPE html>
 <html>
 
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title></title>
+
+	<meta name="author" content="生蚝科技">
+	<meta name="created" content="2020-05-10">
+	<meta name="revised" content="2020-06-06">
+
+	<title>{block name='title'}{/block}</title>
 
 	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.bootcss.com/admin-lte/2.4.8/css/AdminLTE.min.css">
@@ -84,6 +81,16 @@
 </head>
 
 <body class="hold-transition skin-cyan sidebar-mini">
+	
+	<script>
+		window.onload = function () {
+			// PC隐藏缩起菜单的功能键
+			if (!isPhone()) {
+				$(".sidebar-toggle").hide();
+			}
+		}
+	</script>
+
 	<div class="wrapper">
 
 		{include file='/navbar' /}

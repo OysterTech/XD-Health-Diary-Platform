@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @name 个人健康日记平台-M-外链
+ * @name 小丁健康日记平台-M-外链
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-31
  * @version 2020-05-31

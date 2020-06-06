@@ -1,12 +1,14 @@
 <?php
 /**
- * @name 个人健康日记平台-V-枚举管理
+ * @name 小丁健康日记平台-V-枚举管理
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-17
- * @version 2020-05-30
+ * @version 2020-06-06
  */
 ?>
 {extend name="/framework" /}
+
+{block name='title'}枚举管理 / 小丁健康日记平台后台{/block}
 
 {block name='pageCss'}
 <style>
@@ -241,7 +243,12 @@
 					},
 					success: function (ret) {
 						if (ret.code == 200) {
-							$.fn.zTree.init($("#ztree"), that.setting, ret.data.nodes);
+							let nodes = ret.data.nodes;
+
+							// 加个根节点，方便在一级新增枚举类型
+							nodes.push({ id: 0, pId: 0, name: "根节点", open: true });
+
+							$.fn.zTree.init($("#ztree"), that.setting, nodes);
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {

@@ -1,5 +1,5 @@
 /**
- * @name 个人健康日记平台-JS-主页Vue
+ * @name 小丁健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
  * @version 2020-06-06

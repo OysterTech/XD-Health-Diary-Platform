@@ -1,6 +1,6 @@
 <?php
 /**
- * @name 个人健康日记平台-V-后台-接口日志
+ * @name 小丁健康日记平台-V-后台-接口日志
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-30
  * @version 2020-06-06
@@ -229,7 +229,7 @@
 					return;
 				}
 
-				if (that.filterData.idLast5.length !== 5) {
+				if (that.filterData.idLast5 !== undefined && that.filterData.idLast5.length !== 5) {
 					showModalTips("“ID后5位”必须为5个字符");
 					return;
 				}

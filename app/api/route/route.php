@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @name 个人健康日记平台-R-接口路由
+ * @name 小丁健康日记平台-R-接口路由
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-01
  * @version 2020-05-05
