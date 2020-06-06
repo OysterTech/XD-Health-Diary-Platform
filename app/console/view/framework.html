@@ -39,7 +39,7 @@
 	<script src="https://test.xshgzs.com/js/config.js"></script>
 
 	<style>
-		th {
+		th,td {
 			text-align: center;
 			vertical-align: middle !important;
 		}
@@ -58,6 +58,7 @@
 			overflow-y: auto;
 		}
 
+		/* 方便表格左右移动 [start] */
 		.div_table {
 			overflow: auto;
 			display: block;
@@ -66,6 +67,8 @@
 		.div_table table {
 			min-width: 100%;
 		}
+
+		/* 方便表格左右移动 [end] */
 
 		.operateBtnGroup {
 			padding-bottom: 15px;
@@ -81,7 +84,7 @@
 </head>
 
 <body class="hold-transition skin-cyan sidebar-mini">
-	
+
 	<script>
 		window.onload = function () {
 			// PC隐藏缩起菜单的功能键
@@ -160,7 +163,7 @@
 		</div>
 	</div>
 
-	{block name="vueScript"} {/block}
+	{block name="js"} {/block}
 </body>
 
 </html>

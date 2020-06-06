@@ -1,12 +1,14 @@
 <?php
 /**
- * @name 小丁健康日记平台-V-后台-接口日志
+ * @name 小丁健康日记平台-V-后台-接口日志管理
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-30
  * @version 2020-06-06
  */
 ?>
 {extend name="/framework" /}
+
+{block name='title'}接口日志管理 / 小丁健康日记平台后台{/block}
 
 {block name='pageCss'}
 <style>
@@ -163,7 +165,7 @@
 </div>
 {/block}
 
-{block name='vueScript'}
+{block name='js'}
 <script>
 	var vm = new Vue({
 		el: '#app',
