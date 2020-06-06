@@ -55,12 +55,12 @@ class Index extends BaseController
 		$userName = inputPost('userName', 0, 1);
 		$pin = inputPost('userPin', 0, 1);
 
-		$userInfo = AppConf::where('name', 'userInfo')->find();
-		$userInfo = json_decode($userInfo['value'], true);
+		$userInfo = AppConf::get('userInfo');
+		$userInfo = json_decode($userInfo, true);
 		$salt = $userInfo['salt'];
 
 		if (sha1($salt . md5($userName . $pin) . $pin) === $userInfo['pin']) {
-			if (AppConf::where('name', 'use2faToken')->find()['value'] === '1') {
+			if (AppConf::get('use2faToken') === '1') {
 				$ticket = sha1(time() . $pin);
 
 				Session::set('loginTicket', $ticket);
