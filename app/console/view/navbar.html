@@ -22,14 +22,13 @@
 					<li class="dropdown user user-menu">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<img src="https://static.xshgzs.com/image/user.png" class="user-image">
-							<span class="hidden-xs">{{userInfo['nickName']}}</span>
+							<span class="hidden-xs">{:think\\facade\\Session::get('nickName')}</span>
 						</a>
 						<ul class="dropdown-menu">
 							<li class="user-header">
 								<img src="https://static.xshgzs.com/image/user.png" class="img-circle">
-								<p>{{userInfo['userName']}} - {{userInfo['nickName']}}
-									<!--small>Member since ?</small-->
-								</p>
+								<p>{:think\\facade\\Session::get('userName')} -
+									{:think\\facade\\Session::get('nickName')}</p>
 							</li>
 							<!-- Menu Footer-->
 							<li class="user-footer">
@@ -57,38 +56,56 @@
 					<img src="https://static.xshgzs.com/image/user.png" class="img-circle">
 				</div>
 				<div class="pull-left info">
-					<p>{{userInfo['nickName']}}<br><br>系统管理员</p>
+					<p>{:think\\facade\\Session::get('nickName')}<br><br>系统管理员</p>
 				</div>
 			</div>
 			<!-- 菜单树 -->
 			<ul class="sidebar-menu" data-widget="tree">
 				<li>
-					<a onclick="window.location.href=window.CONFIG.rootUrl"><i class="fas fa-home"></i> 系统主页面</a>
+					<a onclick="window.location.href=window.CONFIG.rootUrl">
+						<i class="fas fa-home" style="padding-right: 6px;"></i> 系统主页面
+					</a>
 				</li>
 
 				<li>
-					<a href="/console/enum/index"><i class="fas fa-book"></i> 枚举管理</a>
+					<a href="/console/enum/index">
+						<i class="fas fa-book" style="padding-right: 6px;padding-left: 2px;"></i> 枚举管理
+					</a>
 				</li>
 
 				<li>
-					<a href="/console/dashborad/index"><i class="fas fa-chalkboard-teacher"></i> 首页看板设置</a>
+					<a href="/console/dashborad/index">
+						<i class="fas fa-chalkboard-teacher" style="padding-right: 3px;"></i> 看板设置
+					</a>
 				</li>
 
 				<li>
-					<a href="/console/link/index"><i class="fas fa-link"></i> 外链跳转管理</a>
+					<a href="/console/link/index">
+						<i class="fas fa-link" style="padding-right: 3px;padding-left: 3px;"></i> 外链管理
+					</a>
+				</li>
+
+				<li>
+					<a href="/console/config/index">
+						<i class="fas fa-cogs" style="padding-right: 2px;"></i> 系统配置
+					</a>
 				</li>
 
 				<li class="treeview">
 					<a href="#">
-						<i class="fas fa-file-contract"></i> 日志管理
+						<i class="fas fa-file-contract" style="padding-right: 4px;padding-left: 4px;"></i> 日志管理
 						<span class="pull-right-container"><i class="fas fa-angle-left pull-right"></i></span>
 					</a>
 					<ul class="treeview-menu">
 						<li>
-							<a href="/console/log/file/index"><i class="fas fa-file-alt"></i> 附件查看日志</a>
+							<a href="/console/log/file/index">
+								<i class="fas fa-file-alt" style="padding-right: 4px;padding-left: 4px;"></i> 附件查看日志
+							</a>
 						</li>
 						<li>
-							<a href="/console/log/api/index"><i class="fas fa-network-wired"></i> 接口请求日志</a>
+							<a href="/console/log/api/index">
+								<i class="fas fa-network-wired"></i> 接口请求日志
+							</a>
 						</li>
 					</ul>
 				</li>
