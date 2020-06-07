@@ -3,7 +3,7 @@
  * @name 小丁健康日记平台-V-枚举管理
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-17
- * @version 2020-06-06
+ * @version 2020-06-07
  */
 ?>
 {extend name="/framework" /}
@@ -129,8 +129,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
-						  class="sr-only">Close</span></button>
+				<button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 				<h3 class="modal-title">确认删除提示</h3>
 			</div>
 			<div class="modal-body">
@@ -148,12 +147,30 @@
 	</div>
 </div>
 
+<div class="modal fade" id="checkSureDeleteModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title" style="color:red">再次确认删除提示</h3>
+			</div>
+			<div class="modal-body">
+				<p id="checkSureDeleteTips" style="color:#fb7312;font-weight:bold;font-size:21px;text-align:center;">
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
+				<button class="btn btn-danger" @click="toDelete">确认删除 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="modal fade" id="CUModal">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button class="close" data-dismiss="modal"><span aria-hidden="true"></span><span
-						  class="sr-only">Close</span></button>
+				<button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 				<h3 class="modal-title">
 					{{ CUInfo.operateType=='create'?'新建':'修改' }}
 					<b style="color:#fb7312">{{ CUInfo.type=='type'?'父类型':'枚举值' }}</b>
@@ -171,6 +188,12 @@
 					</tr>
 					<tr>
 						<th style="vertical-align: middle;">{{ CUInfo.type=='type'?'父类型名称':'枚举值' }}</th>
+						<td>
+							<input v-model="CUInfo.value" class="form-control">
+						</td>
+					</tr>
+					<tr v-if="CUInfo.type=='type'">
+						<th style="vertical-align: middle;">是否显示</th>
 						<td>
 							<input v-model="CUInfo.value" class="form-control">
 						</td>
@@ -245,7 +268,7 @@
 					},
 					success: function (ret) {
 						unlockScreen();
-						
+
 						if (ret.code == 200) {
 							let nodes = ret.data.nodes;
 
@@ -282,6 +305,8 @@
 						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
 					},
 					success: function (ret) {
+						unlockScreen();
+
 						if (ret.code == 200) {
 							that.enumList = ret.data['data'];
 						} else if (ret.tips !== '') {
@@ -343,6 +368,10 @@
 								};
 								that.makeTree();
 							}
+						} else if ($.inArray(ret.code, [4002, 4003, 4004, 4005]) !== -1) {
+							$("#checkSureDeleteTips").html(ret.tips);
+							$("#checkSureDeleteModal").modal("show");
+							return true;
 						} else if (ret.tips !== '') {
 							showModalTips(ret.tips);
 						} else {
