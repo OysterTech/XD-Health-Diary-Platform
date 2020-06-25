@@ -4,7 +4,7 @@
  * @name 小丁健康日记平台-C-首页
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-24
- * @version 2020-06-06
+ * @version 2020-06-13
  */
 
 namespace app\index\controller;
@@ -68,7 +68,7 @@ class Index extends BaseController
 
 				return packApiData(4031, 'need two factor auth', ['ticket' => $ticket], '请输入二步验证TOKEN', false);
 			} else {
-				$this->setLoginState($userInfo['userName'], $userInfo['nickName']);
+				$this->setLoginState($userInfo['name'], $userInfo['nickName']);
 				return packApiData(200, 'success', ['url' => '/index/main'], '', false);
 			}
 		} else {

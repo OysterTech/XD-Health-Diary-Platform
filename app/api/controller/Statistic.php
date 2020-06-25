@@ -4,7 +4,7 @@
  * @name 小丁健康日记平台-C-统计
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-01
- * @version 2020-05-30
+ * @version 2020-06-13
  */
 
 namespace app\api\controller;
@@ -41,7 +41,7 @@ class Statistic extends BaseController
 		$month = inputGet('month', 0, 1);
 		$type = inputGet('type', 0, 1);
 
-		$query = \think\facade\Db::query('SELECT el.value AS name,COUNT(xen.key_id) AS value FROM activity_enum AS xen INNER JOIN (SELECT * FROM activity_list WHERE year=:year AND month=:month) AS xl ON xen.activity_id=xl.id LEFT JOIN enum_list AS el ON xen.enum_id=el.id WHERE el.type_id=:enumType GROUP BY el.value', ['year' => $year, 'month' => $month, 'enumType' => $type]);
+		$query = \think\facade\Db::query('SELECT el.value AS name,COUNT(xen.id) AS value FROM activity_enum AS xen INNER JOIN (SELECT * FROM activity_list WHERE year=:year AND month=:month) AS xl ON xen.activity_id=xl.id LEFT JOIN enum_list AS el ON xen.enum_id=el.id WHERE el.type_id=:enumType GROUP BY el.value', ['year' => $year, 'month' => $month, 'enumType' => $type]);
 
 		if (count($query) > 0) return packApiData(200, 'success', ['data' => $query], '', false);
 		else return packApiData(404, 'Data not found', [], '根据枚举值统计数据失败');
