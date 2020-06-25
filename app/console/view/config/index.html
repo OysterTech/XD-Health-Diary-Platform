@@ -1,0 +1,322 @@
+<?php
+/**
+ * @name 小丁健康日记平台-V-后台-系统配置
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-06-21
+ * @version 2020-06-25
+ */
+?>
+{extend name="/framework" /}
+
+{block name='title'}系统配置 / 小丁健康日记平台后台{/block}
+
+{block name='pageCss'}
+<style>
+	@media (min-width: 768px) {
+		#CUModal>div {
+			width: 800px;
+		}
+	}
+</style>
+{/block}
+
+{block name='vueBody'}
+<table-filter ref="filterRef"
+			  :form="filterForm"
+			  :filter-data.sync="filterData"
+			  submit-event-name="getFilterData">
+</table-filter>
+
+<div class="operateBtnGroup">
+	<button class="btn btn-primary" @click="readyCU('create','','','')">新增配置项</button>
+</div>
+
+<div class="div_table">
+	<table id="table" class="table table-striped table-bordered table-hover"
+		   style="border-radius: 5px; border-collapse: separate;">
+		<thead style="background-color: #fff;">
+			<tr>
+				<th>键名</th>
+				<th>中文名</th>
+				<th>创建时</th>
+				<th>修改时</th>
+				<th>IP</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr v-for="info in list">
+				<td>{{info['name']}}</td>
+				<td>{{info['chinese_name']}}</td>
+				<td class="cell-center">{{info['create_time']}}</td>
+				<td class="cell-center">{{info['update_time']}}</td>
+				<td class="cell-center">{{info['ip']}}</td>
+				<td class="cell-button-group">
+					<button class="btn btn-info"
+							@click="readyCU('update',info['name'],info['chinese_name'],info['value'])">编辑配置值</button>
+					<button class="btn btn-warning"
+							@click="readyModifyName()">修改键名</button>
+					<button class="btn btn-danger" @click="readyDelete(info['name'],info['chinese_name'])">删除</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<pagination ref="pageNav"
+			:now.sync="nowPage"
+			:total="total"
+			:per-page="perPage"
+			getdata-event-name="getList">
+</pagination>
+
+<div class="modal fade" id="deleteModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title">
+					删除配置&nbsp;[<font color="#fb7312">{{ deleteInfo.chineseName }}</font>]
+				</h3>
+			</div>
+			<div class="modal-body">
+				<div class="alert alert-danger">
+					<center style="font-size: 18px;">
+						请确认是否删除<br>
+						<font color="#edff5a"><b>{{deleteInfo.chineseName}}</b></font>
+						(<font color="#68e0ff">{{deleteInfo.name}}</font>)
+						<hr>
+						如已确认，请输入密码以验证身份
+					</center>
+				</div>
+
+				<div class="input-group">
+					<span class="input-group-addon">
+						<font color="#4957ff"><b>您的密码</b></font>
+					</span>
+					<input type="password" class="form-control">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
+				<button class="btn btn-danger" @click="toDelete">确认删除 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="CUModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title">
+					{{ CUInfo.operateType=='create'?'新建':'修改' }}配置
+
+					<template v-if="CUInfo.operateType=='update'">
+						&nbsp;[<font color="#fb7312">{{ CUInfo.showName }}</font>]
+					</template>
+				</h3>
+			</div>
+			<div class="modal-body">
+				<table class="table table-striped table-bordered table-hover"
+					   style="border-radius: 5px; border-collapse: separate;">
+					<tr>
+						<th style="vertical-align: middle;">配置键名</th>
+						<td>
+							<input v-model="CUInfo.name" class="form-control"
+								   :disabled="CUInfo.operateType=='create'?false:true">
+						</td>
+					</tr>
+					<tr>
+						<th style="vertical-align: middle;">配置中文名</th>
+						<td>
+							<input v-model="CUInfo.chineseName" class="form-control">
+						</td>
+					</tr>
+					<tr>
+						<th style="vertical-align: middle;">配置值</th>
+						<td>
+							<textarea id="cuValue_text" v-model="CUInfo.value" class="form-control"
+									  rows="18"></textarea>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
+				<button class="btn btn-success" @click="toCU">确认 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name='js'}
+<script>
+	var vm = new Vue({
+		el: '#app',
+		components: {
+			'table-filter': tableFilterVue,
+			'pagination': paginationVue,
+		},
+		data: {
+			token: "{$token}",
+			total: 0,
+			nowPage: 1,
+			perPage: 25,
+			list: [],
+			detail: [],
+			filterForm: [
+				{
+					name: {
+						type: "input",
+						name: "配置键名"
+					},
+					value: {
+						type: "input",
+						name: "配置值"
+					},
+				},
+				{
+					create_time: {
+						type: "input",
+						name: "创建时间"
+					},
+					update_time: {
+						type: "input",
+						name: "修改时间"
+					}
+				}
+			],
+			filterData: {},
+			CUInfo: {
+				operateType: "",
+				showName: "",
+				name: "",
+				chineseName: "",
+				value: ""
+			},
+			deleteInfo: {
+				name: "",
+				chineseName: ""
+			},
+		},
+		methods: {
+			getFilterData: function () {
+				this.getList();
+			},
+			getList: function () {
+				let that = this;
+
+				if ((this.nowPage - 1) * this.perPage > this.totalPage) {
+					showModalTips("当前页码大于数据总条数，请返回上一页！");
+					return;
+				}
+
+				lockScreen();
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "config/list",
+					dataType: "json",
+					type: "post",
+					data: {
+						filterData: that.filterData,
+						token: that.token,
+						page: that.nowPage,
+						perPage: that.perPage,
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							that.list = ret.data.list;
+							that.total = ret.data.total;
+
+							that.$refs.pageNav.totalData = that.total;
+							that.$refs.pageNav.totalPage = Math.ceil(that.total / that.perPage);
+							return;
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				})
+			},
+			readyCU: function (operateType, name, chineseName, value) {
+				this.CUInfo.operateType = operateType;
+				this.CUInfo.showName = chineseName;
+				this.CUInfo.name = name;
+				this.CUInfo.chineseName = chineseName;
+				this.CUInfo.value = value;
+
+				$("#CUModal").modal("show");
+				return true;
+			},
+			toCU: function () {
+				let that = this;
+				let CUInfo = that.CUInfo;
+
+				if (CUInfo.value == '') {
+					showModalTips("配置值不能为空！");
+					return false;
+				}
+
+				delete CUInfo.showName;
+
+				lockScreen();
+				$("#CUModal").modal("hide");
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "config/toCU",
+					type: "post",
+					dataType: "json",
+					data: {
+						token: that.token,
+						cuInfo: CUInfo
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							alert("操作成功！");
+							that.getList();
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				})
+			},
+			readyDelete: function (name, chineseName) {
+				this.deleteInfo = {
+					chineseName: chineseName,
+					name: name
+				};
+
+				$("#deleteModal").modal("show");
+				return true;
+			},
+			toDelete: function () {
+				
+			}
+		},
+		mounted() {
+			this.getList();
+		},
+	});
+</script>
+{/block}
