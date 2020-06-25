@@ -6,7 +6,7 @@
 
 	<meta name="author" content="生蚝科技">
 	<meta name="created" content="2020-05-10">
-	<meta name="revised" content="2020-06-07">
+	<meta name="revised" content="2020-06-22">
 
 	<title>{block name='title'}{/block}</title>
 
@@ -16,6 +16,8 @@
 	<link rel="stylesheet" href="https://cdn.bootcss.com/zTree.v3/3.5.28/css/zTreeStyle/zTreeStyle.min.css">
 	<link rel="stylesheet" href="https://static.xshgzs.com/css/adminlte_cyan.css">
 	<link rel="stylesheet" href="https://static.xshgzs.com/css/loading.css">
+	
+	<link rel="stylesheet" href="{:think\\facade\\Config::get('app.app_host')}css/console.css">
 
 	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/fontawesome.min.css">
 	<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.13.0/css/solid.min.css">
@@ -36,48 +38,7 @@
 	<script src="https://static.xshgzs.com/js/dataTables.responsive.js"></script>
 	<script src="https://static.xshgzs.com/js/utils.js"></script>
 
-	<script src="https://test.xshgzs.com/js/config.js"></script>
-
-	<style>
-		th {
-			text-align: center;
-			vertical-align: middle !important;
-		}
-
-		tbody tr:hover {
-			color: #8a6d3b !important;
-			background-color: #fcf8e3 !important;
-			border-color: #faebcc !important;
-		}
-
-		.main-header .sidebar-toggle:before {
-			content: "";
-		}
-
-		.modal {
-			overflow-y: auto;
-		}
-
-		/* 方便表格左右移动 [start] */
-		.div_table {
-			overflow: auto;
-			display: block;
-		}
-
-		.div_table table {
-			min-width: 100%;
-		}
-
-		/* 方便表格左右移动 [end] */
-
-		.operateBtnGroup {
-			padding-bottom: 15px;
-		}
-
-		.input-group .input-group-addon {
-			background-color: #eee !important;
-		}
-	</style>
+	<script src="{:think\\facade\\Config::get('app.app_host')}js/config.js"></script>
 
 	{block name='pageCss'} {/block}
 
@@ -136,7 +97,7 @@
 				if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
 					window.location.href = "mqqwpa://im/chat?chat_type=wpa&uin=571339406";
 				} else {
-					window.open("http://wpa.qq.com/msgrd?v=3&uin=571339406");
+					window.open("https://wpa.qq.com/msgrd?v=3&uin=571339406");
 				}
 			}
 		</script>
