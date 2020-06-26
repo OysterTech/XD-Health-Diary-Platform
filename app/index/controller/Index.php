@@ -4,7 +4,7 @@
  * @name 小丁健康日记平台-C-首页
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-04-24
- * @version 2020-06-13
+ * @version 2020-06-25
  */
 
 namespace app\index\controller;
@@ -57,9 +57,8 @@ class Index extends BaseController
 
 		$userInfo = AppConf::get('userInfo');
 		$userInfo = json_decode($userInfo, true);
-		$salt = $userInfo['salt'];
 
-		if (sha1($salt . md5($userName . $pin) . $pin) === $userInfo['pin']) {
+		if (checkPassword($pin, $userName)) {
 			if (AppConf::get('use2faToken') === '1') {
 				$ticket = sha1(time() . $pin);
 

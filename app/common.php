@@ -1,5 +1,6 @@
 <?php
 // 应用公共文件
+
 use app\common\model\ApiRequestLog;
 use think\facade\Request;
 use think\facade\Session;
@@ -12,7 +13,7 @@ use think\facade\Session;
  * @since 2020-05-01
  * @version 2020-06-06
  */
-function checkToken($token = '', $platform = 'front')
+function checkToken($token, $platform = 'front')
 {
 	if (Session::has($platform . '_token') && Session::get($platform . '_token') === $token) {
 		return true;
@@ -35,6 +36,26 @@ function createToken($platform = 'front')
 	$token = sha1(time() . mt_rand());
 	Session::set($platform . '_token', $token);
 	return $token;
+}
+
+
+/**
+ * checkPassword 校验密码的有效性
+ * @param string $password
+ * @param string $userName
+ * @return boolean 密码是否有效
+ * @author Oyster Cheung <master@xshgzs.com>
+ * @since 2020-06-25
+ * @version 2020-06-25
+ */
+function checkPassword($password, $userName = '')
+{
+	$userInfo = \app\common\model\Config::get('userInfo');
+	$userInfo = json_decode($userInfo, true);
+	$userName = $userName !== '' ? $userName : $userInfo['name'];
+
+	if (sha1($userInfo['salt'] . md5($userName . $password) . $password) === $userInfo['pin']) return true;
+	else return false;
 }
 
 
@@ -87,7 +108,7 @@ function getIP()
  * @since 2019-11-17
  * @version 2020-05-30
  */
-function packApiData($code = 0, $message = '', $data = [], $tips = '', $needLog = true, $isDie = false)
+function packApiData($code = 0, $message = '',  $data = [],  $tips = '',  $needLog = true,  $isDie = false)
 {
 	$reqId = makeUUID();
 
