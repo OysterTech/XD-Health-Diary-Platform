@@ -4,7 +4,7 @@
  * @name 小丁健康日记平台-R-控制台路由
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-24
- * @version 2020-06-24
+ * @version 2020-06-26
  */
 
 use think\facade\Route;
@@ -20,8 +20,12 @@ Route::group('enum', function () {
 
 Route::group('config', function () {
 	Route::get('index', 'Config/index');
+	Route::get('getValue', 'Config/getValue');
+	Route::get('getRemark', 'Config/getRemark');
 	Route::post('list', 'Config/getList');
 	Route::post('toCU', 'Config/toCU');
+	Route::post('toModifyName', 'Config/toModifyName');
+	Route::post('toDelete', 'Config/toDelete');
 });
 
 Route::group('log/api', function () {

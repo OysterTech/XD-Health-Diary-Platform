@@ -3,7 +3,7 @@
  * @name 小丁健康日记平台-V-后台-系统配置
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-06-21
- * @version 2020-06-25
+ * @version 2020-06-26
  */
 ?>
 {extend name="/framework" /}
@@ -28,7 +28,8 @@
 </table-filter>
 
 <div class="operateBtnGroup">
-	<button class="btn btn-primary" @click="readyCU('create','','','')">新增配置项</button>
+	<button class="btn btn-primary" @click="readyCU('create','','')">新增配置项</button>
+	<button class="btn">点击单行可查看该配置的备注</button>
 </div>
 
 <div class="div_table">
@@ -47,16 +48,16 @@
 
 		<tbody>
 			<tr v-for="info in list">
-				<td>{{info['name']}}</td>
-				<td>{{info['chinese_name']}}</td>
-				<td class="cell-center">{{info['create_time']}}</td>
-				<td class="cell-center">{{info['update_time']}}</td>
-				<td class="cell-center">{{info['ip']}}</td>
+				<td @click="getRemark(info['name'])">{{info['name']}}</td>
+				<td @click="getRemark(info['name'])">{{info['chinese_name']}}</td>
+				<td @click="getRemark(info['name'])" class="cell-center">{{info['create_time']}}</td>
+				<td @click="getRemark(info['name'])" class="cell-center">{{info['update_time']}}</td>
+				<td @click="getRemark(info['name'])" class="cell-center">{{info['ip']}}</td>
 				<td class="cell-button-group">
 					<button class="btn btn-info"
-							@click="readyCU('update',info['name'],info['chinese_name'],info['value'])">编辑配置值</button>
+							@click="readyCU('update',info['name'],info['chinese_name'])">编辑配置值</button>
 					<button class="btn btn-warning"
-							@click="readyModifyName()">修改键名</button>
+							@click="readyModifyName(info['name'],info['chinese_name'])">修改键名</button>
 					<button class="btn btn-danger" @click="readyDelete(info['name'],info['chinese_name'])">删除</button>
 				</td>
 			</tr>
@@ -95,12 +96,51 @@
 					<span class="input-group-addon">
 						<font color="#4957ff"><b>您的密码</b></font>
 					</span>
-					<input type="password" class="form-control">
+					<input type="password" v-model="deleteInfo.password" class="form-control">
 				</div>
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
 				<button class="btn btn-danger" @click="toDelete">确认删除 &gt;</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modifyNameModal" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+				<h3 class="modal-title">
+					修改配置键名&nbsp;[<font color="#fb7312">{{ modifyNameInfo.chineseName }}</font>]
+				</h3>
+			</div>
+			<div class="modal-body">
+				<div class="input-group">
+					<span class="input-group-addon">
+						<font color="#3eab4b"><b>旧键名</b></font>
+					</span>
+					<input :value="modifyNameInfo.oldName" class="form-control" disabled>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">
+						<font color="red"><b>新键名</b></font>
+					</span>
+					<input v-model="modifyNameInfo.newName" class="form-control"
+						   style="font-weight: bold;font-size: 16px;">
+				</div>
+				<hr>
+				<div class="input-group">
+					<span class="input-group-addon">
+						<font color="#4957ff"><b>您的密码</b></font>
+					</span>
+					<input type="password" v-model="modifyNameInfo.password" class="form-control">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal">&lt; 放弃</button>
+				<button class="btn btn-warning" @click="toModifyName">确认编辑 &gt;</button>
 			</div>
 		</div>
 	</div>
@@ -200,7 +240,14 @@
 			},
 			deleteInfo: {
 				name: "",
-				chineseName: ""
+				chineseName: "",
+				password: ""
+			},
+			modifyNameInfo: {
+				oldName: "",
+				newName: "",
+				chineseName: "",
+				password: ""
 			},
 		},
 		methods: {
@@ -250,12 +297,73 @@
 					}
 				})
 			},
-			readyCU: function (operateType, name, chineseName, value) {
+			getRemark: function (name) {
+				let that = this;
+				lockScreen();
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "config/getRemark",
+					type: "get",
+					dataType: "json",
+					data: {
+						token: that.token,
+						name: name
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							showModalTips(ret.data.remark, "[" + name + "]的备注");
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				});
+			},
+			readyCU: function (operateType, name, chineseName) {
+				let that = this;
 				this.CUInfo.operateType = operateType;
 				this.CUInfo.showName = chineseName;
 				this.CUInfo.name = name;
 				this.CUInfo.chineseName = chineseName;
-				this.CUInfo.value = value;
+				this.CUInfo.value = "";
+
+				if (operateType === 'update') {
+					lockScreen();
+
+					$.ajax({
+						url: window.CONFIG.consoleApiPath + "config/getValue",
+						type: "get",
+						dataType: "json",
+						data: {
+							token: that.token,
+							name: name
+						},
+						error: function (e) {
+							unlockScreen();
+							console.log(e);
+							showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+						},
+						success: function (ret) {
+							unlockScreen();
+
+							if (ret.code == 200) {
+								that.CUInfo.value = ret.data.value;
+							} else if (ret.tips !== '') {
+								showModalTips(ret.tips);
+							} else {
+								showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+							}
+						}
+					});
+				}
 
 				$("#CUModal").modal("show");
 				return true;
@@ -299,19 +407,108 @@
 							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
 						}
 					}
-				})
+				});
 			},
 			readyDelete: function (name, chineseName) {
-				this.deleteInfo = {
-					chineseName: chineseName,
-					name: name
-				};
+				this.deleteInfo.chineseName = chineseName;
+				this.deleteInfo.name = name;
+				this.deleteInfo.password = "";
 
 				$("#deleteModal").modal("show");
 				return true;
 			},
 			toDelete: function () {
-				
+				let that = this;
+				let deleteInfo = this.deleteInfo;
+
+				if (deleteInfo.password.length < 6) {
+					showModalTips("请正确输入密码");
+					return false;
+				}
+
+				lockScreen();
+				$("#deleteModal").modal("hide");
+
+				delete deleteInfo.chineseName;
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "config/toDelete",
+					type: "post",
+					dataType: "json",
+					data: {
+						token: that.token,
+						deleteInfo: deleteInfo
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							alert("删除成功！");
+							that.getList();
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				})
+			},
+			readyModifyName: function (name, chineseName) {
+				this.modifyNameInfo.chineseName = chineseName;
+				this.modifyNameInfo.oldName = name;
+				this.modifyNameInfo.newName = "";
+				this.modifyNameInfo.password = "";
+
+				$("#modifyNameModal").modal("show");
+				return true;
+			},
+			toModifyName: function () {
+				let that = this;
+				let info = that.modifyNameInfo;
+
+				if (info.newName.length < 6) {
+					showModalTips("请正确输入 [6个字符以上] 的新键名");
+					return false;
+				}
+				if (info.password.length < 6) {
+					showModalTips("请正确输入密码");
+					return false;
+				}
+
+				delete info.chineseName;
+
+				$.ajax({
+					url: window.CONFIG.consoleApiPath + "config/toModifyName",
+					type: "post",
+					dataType: "json",
+					data: {
+						token: that.token,
+						info: info
+					},
+					error: function (e) {
+						unlockScreen();
+						console.log(e);
+						showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+					},
+					success: function (ret) {
+						unlockScreen();
+
+						if (ret.code == 200) {
+							alert("修改成功！");
+							that.getList();
+							$("#modifyNameModal").modal("hide");
+						} else if (ret.tips !== '') {
+							showModalTips(ret.tips);
+						} else {
+							showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+						}
+					}
+				})
 			}
 		},
 		mounted() {
