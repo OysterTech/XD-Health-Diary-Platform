@@ -4,7 +4,7 @@
  * @name 小丁健康日记平台-C-后台-枚举
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-05-09
- * @version 2020-06-07
+ * @version 2020-06-25
  */
 
 namespace app\console\controller;
@@ -197,14 +197,14 @@ class Enum extends BaseController
 				'name' => $value
 			], ['id' => $id]);
 
-			if ($query['name']) return packApiData(200, 'success');
+			if (!$query->isEmpty()) return packApiData(200, 'success');
 			else return packApiData(5001, 'Database error', [$query], '修改枚举父类型失败');
 		} elseif ($type == 'value') {
 			$query = EnumList::update([
 				'value' => $value
 			], ['id' => $id]);
 
-			if ($query['value']) return packApiData(200, 'success');
+			if (!$query->isEmpty()) return packApiData(200, 'success');
 			else return packApiData(5001, 'Database error', [$query], '修改枚举值失败');
 		} else {
 			return packApiData(4001, 'Invalid update type', [], '修改操作类型无效');

@@ -71,7 +71,7 @@ class Config extends BaseController
 			->find();
 
 		if (isset($query['remark'])) return packApiData(200, 'success', ['remark' => $query['remark']]);
-		else return packApiData(404, 'Config not found', [], '查询配置备注失败：不存在此配置');
+		else return packApiData(404, 'Config not found', [], '查询配置备注失败：不存在此配置', false);
 	}
 
 
