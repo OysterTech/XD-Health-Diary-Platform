@@ -169,12 +169,13 @@
 
 
 <!-- echarts饼图 -->
-<!-- @Oyster Cheung(20200404-20200406) -->
+<!-- @Oyster Cheung(20200404-20200704) -->
 <template id="pie-template">
 	<div :id="pieChartId" :style="{height:chartHeight}"></div>
 </template>
 
 <script>
+	var pieDom = {};
 	var pieVue = {
 		template: '#pie-template',
 		props: ['id', 'name', 'height'],
@@ -222,7 +223,70 @@
 				this.chartOption.series[0].data = this.chartData;
 				this.chartOption.legend.data = field;
 
-				echarts.init(document.getElementById(this.pieChartId)).setOption(this.chartOption);
+				// 先销毁同个容器的之前的实例
+				echarts.dispose(document.getElementById(this.pieChartId));
+
+				// 再创建新的实例
+				pieDom[this.pieChartId] = echarts.init(document.getElementById(this.pieChartId));
+				pieDom[this.pieChartId].setOption(this.chartOption);
+
+				// 点击饼块显示对应的活动列表
+				pieDom[this.pieChartId].on('click', function (params) {
+					let paramData = params.data;
+					console.log(paramData);
+
+					if (paramData.id == 0) return;
+
+					lockScreen();
+
+					$.ajax({
+						url: window.CONFIG.apiPath + "statistic/getListByEnumId",
+						data: {
+							token: TOKEN,
+							id: paramData.id
+						},
+						dataType: "json",
+						error: function (e) {
+							unlockScreen();
+							console.log(e);
+							showModalTips("服务器错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + e.responseJSON.tables.Session.errorRequestId);
+						},
+						success: function (ret) {
+							unlockScreen();
+
+							if (ret.code == 200) {
+								let data = ret.data.data;
+								let year = paramData.id.split("|")[0];
+								let month = paramData.id.split("|")[1];
+
+								$("#listModalTitle").text("[]于" + year + "-" + month + "期间共有" + data.length + "次活动");
+								$("#listTableVue").hide();
+								$("#listTableStatic").html("");// 清空原有表格
+
+								for (i in data) {
+									let info = data[i];
+									let html = '<tr>'
+										+ '<td>' + year + "-" + month + "-" + info['day'] + '</td>'
+										+ '<td>' + info['content'] + '</td>'
+										+ '<td><button class="btn btn-success" onclick="vm.showImage(' + "'" + year + "-" + month + "-" + info['day'] + "'," + info['activity_id'] + ')">精彩瞬间(' + info['img'] + ')</button></td>'
+										+ '<td>' + year + "-" + month + "-" + info['day'] + '</td>'
+										+ '</tr>';
+
+									$("#listTableStatic").append(html);
+								}
+
+								$("#listTableStatic").show();
+								$("#listModal").modal("show");
+							} else if (ret.tips !== '') {
+								showModalTips(ret.tips);
+							} else {
+								showModalTips("系统错误<br>请联系技术支持并提供以下ID<br>（可截图或直接提供最后5位）<hr><p style='font-size:22px;color:#078cff'>" + ret.requestId);
+							}
+
+							return;
+						}
+					});
+				});
 			}
 		},
 		updated() {

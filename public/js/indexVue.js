@@ -2,7 +2,7 @@
  * @name 小丁健康日记平台-JS-主页Vue
  * @author Oyster Cheung <master@xshgzs.com>
  * @since 2020-02-01
- * @version 2020-06-06
+ * @version 2020-07-05
  */
 
 var vm = new Vue({
@@ -206,6 +206,7 @@ var vm = new Vue({
 
 							// 还有未知的数据
 							if (that.hadXieDays.length - total > 0) {
+								unknownData.id = 0;
 								unknownData.name = "未知";
 								unknownData['value'] = that.hadXieDays.length - total;
 								chartData.push(unknownData);
@@ -509,6 +510,8 @@ var vm = new Vue({
 					if (ret.code == 200 || ret.code == 404) {
 						data = ret.data;
 
+						$("#listTableStatic").hide();
+						$("#listTableVue").show();
 						$("#listModalTitle").html(year + "-" + month + "-" + day + "共有" + data.length + "次");
 
 						that.todayXieList = data;
@@ -531,7 +534,6 @@ var vm = new Vue({
 				data: {
 					id: id
 				},
-				type: "post",
 				dataType: "json",
 				error: function (e) {
 					showModalTips("图片太涩了<br>服务器加载不出来啊<hr>……服务器未知错误……");
